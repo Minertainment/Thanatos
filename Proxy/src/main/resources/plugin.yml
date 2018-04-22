@@ -1,0 +1,6 @@
+name: Thanatos
+version: 0.1
+author: Der
+depends: [Athena]
+
+main: com.minertainment.thanatos.proxy.ProxyModule

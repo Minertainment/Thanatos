@@ -1,0 +1,6 @@
+name: Thanatos
+version: 0.1
+author: Der
+depend: [Athena]
+
+main: com.minertainment.thanatos.slave.SlaveModule

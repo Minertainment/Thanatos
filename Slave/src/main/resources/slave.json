@@ -1,0 +1,9 @@
+{
+  "CLUSTER": "Junkie",
+  "LIMITS": {
+    "SOFT_PLAYER_LIMIT": 150,
+    "HARD_PLAYER_LIMIT": 250,
+    "SOFT_TPS_LIMIT": 15.0,
+    "HARD_TPS_LIMIT": 10.0
+  }
+}

@@ -8,15 +8,19 @@ public class ClusterConfig extends GSONConfig {
     private static int softPlayerLimit, hardPlayerLimit;
     private static double softTPSLimit, hardTPSLimit;
 
+    private long shutdownTimer;
+
     private Cluster[] clusters;
 
     public ClusterConfig(ThanatosServer server) {
         super(server.getDataFolder(), "clusters.json");
 
-        softPlayerLimit = 150;
-        hardPlayerLimit = 250;
-        softTPSLimit = 15.0;
-        hardTPSLimit = 10.0;
+        softPlayerLimit = 100;
+        hardPlayerLimit = 150;
+        softTPSLimit = 16.0;
+        hardTPSLimit = 13.0;
+
+        shutdownTimer = (20*60*1000);
         clusters = new Cluster[]{
                 new Cluster("Cluster")
         };
@@ -36,6 +40,10 @@ public class ClusterConfig extends GSONConfig {
 
     public static double getSoftTPSLimit() {
         return softTPSLimit;
+    }
+
+    public long getShutdownTimer() {
+        return shutdownTimer;
     }
 
     public Cluster[] getClusters() {

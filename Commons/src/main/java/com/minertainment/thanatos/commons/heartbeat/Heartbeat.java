@@ -1,23 +1,17 @@
 package com.minertainment.thanatos.commons.heartbeat;
 
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
-import com.minertainment.thanatos.commons.serialization.Encoding;
-import io.netty.buffer.ByteBuf;
-
-import java.nio.ByteBuffer;
 
 public class Heartbeat {
 
     private String clusterId;
     private String serverId;
     private ThanatosServerType serverType;
-    private String serverIP;
-    private int serverPort;
     private int onlinePlayers;
     private double tps;
+    private long lastDisconnect;
 
-    public Heartbeat(String clusterId, String serverId, ThanatosServerType serverType,
-                     String serverIP, int serverPort, int onlinePlayers, double tps) {
+    public Heartbeat(String clusterId, String serverId, ThanatosServerType serverType, int onlinePlayers, double tps, long lastDisconnect) {
         if(clusterId == null || serverId == null || clusterId.isEmpty() || serverId.isEmpty()) {
             throw new IllegalArgumentException("ids cannot be null or empty");
         }
@@ -29,10 +23,9 @@ public class Heartbeat {
         this.clusterId = clusterId;
         this.serverId = serverId;
         this.serverType = serverType;
-        this.serverIP = serverIP;
-        this.serverPort = serverPort;
         this.onlinePlayers = onlinePlayers;
         this.tps = tps;
+        this.lastDisconnect = lastDisconnect;
     }
 
     public String getClusterId() {
@@ -47,20 +40,16 @@ public class Heartbeat {
         return serverType;
     }
 
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
     public int getOnlinePlayers() {
         return onlinePlayers;
     }
 
     public double getTPS() {
         return tps;
+    }
+
+    public long getLastDisconnect() {
+        return lastDisconnect;
     }
 
 }

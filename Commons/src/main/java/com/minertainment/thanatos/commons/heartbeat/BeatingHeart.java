@@ -17,7 +17,7 @@ public class BeatingHeart implements Runnable {
         this.thanatosServer = thanatosServer;
 
         lastRun = -1;
-        interval = 10000;
+        interval = 5000;
         maxInterval = 0;
     }
 
@@ -42,8 +42,9 @@ public class BeatingHeart implements Runnable {
             }
             lastRun = System.currentTimeMillis();
 
-            Heartbeat heartbeat = new Heartbeat(thanatosServer.getClusterId(), thanatosServer.getServerId(), thanatosServer.getServerType(),
-                    thanatosServer.getServerIP(), thanatosServer.getServerPort(), thanatosServer.getOnlinePlayers(), thanatosServer.getTPS());
+            Heartbeat heartbeat = new Heartbeat(thanatosServer.getGlobalConfiguration().getClusterId(),
+                    thanatosServer.getGlobalConfiguration().getServerId(), thanatosServer.getServerType(),
+                    thanatosServer.getOnlinePlayers(), thanatosServer.getTPS(), thanatosServer.getLastDisconnect());
             HeartbeatPacket heartbeatPacket = new HeartbeatPacket(heartbeat);
             heartbeatPacket.send();
         }

@@ -7,12 +7,19 @@
     <groupId>com.minertainment.thanatos</groupId>
     <artifactId>Thanatos</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <modules>
         <module>Proxy</module>
         <module>Commons</module>
         <module>Slave</module>
     </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>mAdmin</id>
+            <url>https://repo.minertainment.com/repository/maven-snapshots/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <defaultGoal>clean install</defaultGoal>

@@ -1,6 +1,5 @@
 package com.minertainment.thanatos.commons.heartbeat.packet;
 
-import com.minertainment.athena.Athena;
 import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.packets.PacketListener;
 

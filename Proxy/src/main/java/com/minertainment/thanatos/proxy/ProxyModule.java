@@ -1,11 +1,11 @@
 package com.minertainment.thanatos.proxy;
 
 import com.minertainment.thanatos.commons.Thanatos;
+import com.minertainment.thanatos.commons.cluster.ClusterManager;
 import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
-import com.minertainment.thanatos.commons.cluster.ClusterManager;
 import com.minertainment.thanatos.proxy.config.ProxyConfiguration;
 import com.minertainment.thanatos.proxy.packet.SendPlayerListener;
 import com.minertainment.thanatos.proxy.something.PlayerListener;
@@ -78,26 +78,6 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     }
 
     @Override
-    public String getClusterId() {
-        return globalConfiguration.getClusterId();
-    }
-
-    @Override
-    public String getServerId() {
-        return globalConfiguration.getServerId();
-    }
-
-    @Override
-    public String getServerIP() {
-        return globalConfiguration.getServerIP();
-    }
-
-    @Override
-    public int getServerPort() {
-        return globalConfiguration.getServerPort();
-    }
-
-    @Override
     public int getOnlinePlayers() {
         return getProxy().getOnlineCount();
     }
@@ -106,4 +86,10 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     public double getTPS() {
         return 43.21;
     }
+
+    @Override
+    public long getLastDisconnect() {
+        return -1;
+    }
+
 }

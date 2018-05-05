@@ -6,16 +6,13 @@ import java.io.File;
 
 public class GlobalConfiguration extends GSONConfig {
 
-    private String clusterId, serverId, serverIP;
-    private int serverPort;
+    private String clusterId, serverId;
 
     public GlobalConfiguration(File directory, String configurationName) {
         super(directory, configurationName);
 
-        this.clusterId = "cluster";
-        this.serverId = "server";
-        this.serverIP = "127.0.0.1";
-        this.serverPort = 25565;
+        this.clusterId = "Cluster";
+        this.serverId = "Server";
     }
 
     public String getClusterId() {
@@ -24,14 +21,6 @@ public class GlobalConfiguration extends GSONConfig {
 
     public String getServerId() {
         return serverId;
-    }
-
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    public int getServerPort() {
-        return serverPort;
     }
 
 }

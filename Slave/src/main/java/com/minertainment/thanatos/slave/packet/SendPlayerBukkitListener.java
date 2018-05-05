@@ -47,8 +47,8 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
         }
 
         // Make sure the location is present and this is the correct slave.
-        if(!slaveModule.getServerId().equals(packet.getSlave().getServerId()) || packet.getLocation() == null) {
-            if(!slaveModule.getServerId().equals(packet.getSlave().getServerId())) {
+        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId()) || packet.getLocation() == null) {
+            if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
                 System.out.println(" -- NOT SAME SERV");
             }
             if(packet.getLocation() == null) {

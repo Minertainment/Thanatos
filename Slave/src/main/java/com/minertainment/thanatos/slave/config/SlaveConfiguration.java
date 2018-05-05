@@ -5,27 +5,16 @@ import org.bukkit.plugin.Plugin;
 
 public class SlaveConfiguration extends GSONConfig {
 
-    private String clusterId;
-
     private int softPlayerLimit, hardPlayerLimit;
     private double softTPSLimit, hardTPSLimit;
 
     public SlaveConfiguration(Plugin plugin) {
         super(plugin.getDataFolder(), "slave.json");
 
-        clusterId = "Cluster";
         softPlayerLimit = 150;
         hardPlayerLimit = 250;
         softTPSLimit = 15.0;
         hardTPSLimit = 10.0;
-    }
-
-    public String getClusterId() {
-        return clusterId;
-    }
-
-    public void setClusterId(String clusterId) {
-        this.clusterId = clusterId;
     }
 
     public int getSoftPlayerLimit() {

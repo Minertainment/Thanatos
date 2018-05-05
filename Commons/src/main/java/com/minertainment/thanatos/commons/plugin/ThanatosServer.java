@@ -21,16 +21,10 @@ public interface ThanatosServer {
 
     File getDataFolder();
 
-    String getClusterId();
-
-    String getServerId();
-
-    String getServerIP();
-
-    int getServerPort();
-
     int getOnlinePlayers();
 
     double getTPS();
+
+    long getLastDisconnect();
 
 }

@@ -2,28 +2,24 @@ package com.minertainment.thanatos.commons.slave;
 
 public class Slave {
 
-    private String serverId, serverIP;
-    private int serverPort, onlinePlayers;
-    private double tps;
+    private transient long lastHeartbeat;
 
-    public Slave(String serverId, String serverIP, int serverPort, int onlinePlayers, double tps) {
+    private String serverId;
+    private int onlinePlayers;
+    private double tps;
+    private long lastDisconnect;
+
+    public Slave(String serverId, int onlinePlayers, double tps) {
         this.serverId = serverId;
-        this.serverIP = serverIP;
-        this.serverPort = serverPort;
         this.onlinePlayers = onlinePlayers;
         this.tps = tps;
+        this.lastDisconnect = -1;
+
+        lastHeartbeat = System.currentTimeMillis();
     }
 
     public String getServerId() {
         return serverId;
-    }
-
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    public int getServerPort() {
-        return serverPort;
     }
 
     public int getOnlinePlayers() {
@@ -40,6 +36,22 @@ public class Slave {
 
     public void setTPS(double tps) {
         this.tps = tps;
+    }
+
+    public long getLastDisconnect() {
+        return lastDisconnect;
+    }
+
+    public void setLastDisconnect(long lastDisconnect) {
+        this.lastDisconnect = lastDisconnect;
+    }
+
+    public long getLastHeartbeat() {
+        return lastHeartbeat;
+    }
+
+    public void heartbeat() {
+        this.lastHeartbeat = System.currentTimeMillis();
     }
 
 }

@@ -1,6 +1,11 @@
 package com.minertainment.thanatos.commons.cluster;
 
+import com.minertainment.athena.packets.PacketManager;
+import com.minertainment.athena.tasks.AsyncTask;
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
+import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestCallback;
+import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestData;
+import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestPacket;
 import com.minertainment.thanatos.commons.plugin.TPSMeter;
 import com.minertainment.thanatos.commons.slave.Slave;
 
@@ -41,7 +46,41 @@ public class Cluster {
         return tps / slaveMap.size();
     }
 
-    public Slave getNextSlave() {
+    public void getNextSlave(SlaveCallback callback) {
+        new AsyncTask(() -> {
+            Slave next = null;
+            for(Slave slave : slaveMap.values()) {
+                JoinRequestData data = getData(slave);
+                if(next == null || TPSMeter.fromTPS(data.getTPS()).isHigherThan(
+                        TPSMeter.fromTPS(next.getTPS())) || data.getPlayerCount() < next.getOnlinePlayers()) {
+                    next = slave;
+                    next.setOnlinePlayers(data.getPlayerCount());
+                    next.setTPS(data.getTPS());
+                }
+            }
+            callback.onCallback(next);
+        }).run();
+    }
+
+    private JoinRequestData getData(Slave slave) {
+        JoinRequestCallback callback = new JoinRequestCallback();
+        JoinRequestPacket packet = new JoinRequestPacket(slave, callback);
+        PacketManager.registerCallback(packet);
+        packet.send();
+        while(true) {
+            if(callback.getData() != null && callback.getData().getServerId() != null) {
+                break;
+            }
+            try {
+                Thread.sleep(10);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return callback.getData();
+    }
+
+    public Slave getNextSlaveCached() {
         Slave next = null;
         for(Slave slave : slaveMap.values()) {
             if(slave.getOnlinePlayers() < ClusterConfig.getHardPlayerLimit() && slave.getTPS() > ClusterConfig.getHardTPSLimit()) {
@@ -61,11 +100,11 @@ public class Cluster {
     }
 
     public Slave registerSlave(Heartbeat heartbeat) {
-        return registerSlave(heartbeat.getServerId(), heartbeat.getServerIP(), heartbeat.getServerPort(), heartbeat.getOnlinePlayers(), heartbeat.getTPS());
+        return registerSlave(heartbeat.getServerId(), heartbeat.getOnlinePlayers(), heartbeat.getTPS());
     }
 
-    public Slave registerSlave(String serverId, String serverIP, int serverPort, int onlinePlayers, double tps) {
-        Slave slave = new Slave(serverId, serverIP, serverPort, onlinePlayers, tps);
+    public Slave registerSlave(String serverId, int onlinePlayers, double tps) {
+        Slave slave = new Slave(serverId, onlinePlayers, tps);
         slaveMap.put(serverId, slave);
         return slave;
     }
@@ -75,3 +114,4 @@ public class Cluster {
     }
 
 }
+

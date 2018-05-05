@@ -9,7 +9,7 @@ public class Thanatos {
     private static ThanatosServer server;
 
     public Thanatos(ThanatosServer server) {
-        this.server = server;
+        Thanatos.server = server;
     }
 
     public static ClusterManager getClusterManager() {

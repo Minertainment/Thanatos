@@ -1,10 +1,11 @@
 package com.minertainment.thanatos.proxy.something;
 
+import com.minertainment.thanatos.commons.cluster.Cluster;
+import com.minertainment.thanatos.commons.cluster.SlaveCallback;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
-import com.minertainment.thanatos.proxy.ProxyModule;
-import com.minertainment.thanatos.commons.cluster.Cluster;
 import com.minertainment.thanatos.commons.slave.Slave;
+import com.minertainment.thanatos.proxy.ProxyModule;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -44,7 +45,7 @@ public class PlayerListener implements Listener {
         }
 
         // Send the player to the fallback cluster to pre-load their profile data.
-        Slave fallbackSlave = fallbackCluster.getNextSlave();
+        Slave fallbackSlave = fallbackCluster.getNextSlaveCached();
         ServerInfo fallbackInfo = proxy.getProxy().getServerInfo(fallbackSlave.getServerId());
         if(fallbackInfo != null && !e.getTarget().getName().equals(fallbackInfo.getName())) {
             e.setTarget(fallbackInfo);
@@ -56,21 +57,34 @@ public class PlayerListener implements Listener {
             ThanatosProfile thanatosProfile = (ThanatosProfile) profile;
 
             Cluster lastCluster = proxy.getClusterManager().getCluster(thanatosProfile.getLastCluster());
-            Slave slave = (lastCluster != null ? lastCluster.getNextSlave() : defaultCluster.getNextSlave());
-            if(lastCluster == null) {
-                thanatosProfile.setLastCluster(defaultCluster.getClusterId());
-                thanatosProfile.setLastSlave(slave.getServerId());
-                proxy.getProfileManager().saveProfile(thanatosProfile);
-            }
 
-            new SendPlayerPacket(e.getPlayer().getUniqueId(), slave, thanatosProfile.getLastLocation(), true).send();
+            Cluster finalCluster = (lastCluster != null ? lastCluster : defaultCluster);
+            System.out.println("Searching for slave from " + finalCluster.getClusterId());
+            finalCluster.getNextSlave(new SlaveCallback() {
+                @Override
+                public void onCallback(Slave slave) {
+                    if(slave == null) {
+                        proxy.getLogger().severe("Could not find a suitable slave to move (" + e.getPlayer().getName() + ") to! (Pre-Login)");
+                        return;
+                    }
+                    System.out.println("Found slave " + slave.getServerId());
 
-            // TODO: Use this when switching servers
-            /*new AsyncTask(() -> {
-                for(ProfileManager profileManager : ProfileManager.getProfileManagers()) {
-                    profileManager.saveProfile(profile.getUniqueId(), true);
+                    if(lastCluster == null) {
+                        thanatosProfile.setLastCluster(defaultCluster.getClusterId());
+                        thanatosProfile.setLastSlave(slave.getServerId());
+                        proxy.getProfileManager().saveProfile(thanatosProfile);
+                    }
+
+                    new SendPlayerPacket(e.getPlayer().getUniqueId(), slave, thanatosProfile.getLastLocation(), true).send();
+
+                    // TODO: Use this when switching servers
+                    /*new AsyncTask(() -> {
+                        for(ProfileManager profileManager : ProfileManager.getProfileManagers()) {
+                            profileManager.saveProfile(profile.getUniqueId(), true);
+                        }
+                    }).run();*/
                 }
-            }).run();*/
+            });
         });
     }
 

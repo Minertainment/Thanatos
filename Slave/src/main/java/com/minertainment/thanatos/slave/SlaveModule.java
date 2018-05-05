@@ -8,7 +8,9 @@ import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.slave.config.SlaveConfiguration;
+import com.minertainment.thanatos.slave.packet.JoinRequestListener;
 import com.minertainment.thanatos.slave.packet.SendPlayerBukkitListener;
+import com.minertainment.thanatos.slave.packet.ShutdownListener;
 import com.minertainment.thanatos.slave.something.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +26,11 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     private ClusterManager clusterManager;
     private ThanatosProfileManager profileManager;
 
+    private JoinRequestListener joinRequestListener;
+    private ShutdownListener shutdownListener;
     private SendPlayerBukkitListener sendPlayerBukkitListener;
+
+    private long lastDisconnect;
 
     @Override
     public void onEnable() {
@@ -41,7 +47,13 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         beatingHeart = new BeatingHeart(this);
         clusterManager = new ClusterManager(this);
         profileManager = new ThanatosProfileManager();
+
+        joinRequestListener = new JoinRequestListener(this);
+        shutdownListener = new ShutdownListener(this);
         sendPlayerBukkitListener = new SendPlayerBukkitListener(this);
+
+        lastDisconnect = -1;
+
         new PlayerListener(this);
         getServer().getScheduler().runTaskLater(this, new Runnable() {
             @Override
@@ -51,11 +63,16 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         }, 100L);
     }
 
+    public void setLastDisconnect(long lastDisconnect) {
+        this.lastDisconnect = lastDisconnect;
+    }
+
     @Override
     public void onDisable() {
         beatingHeart.kill();
         clusterManager.disable();
         profileManager.disable();
+        shutdownListener.disable();
         sendPlayerBukkitListener.disable();
     }
 
@@ -80,26 +97,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     }
 
     @Override
-    public String getClusterId() {
-        return globalConfiguration.getClusterId();
-    }
-
-    @Override
-    public String getServerId() {
-        return globalConfiguration.getServerId();
-    }
-
-    @Override
-    public String getServerIP() {
-        return globalConfiguration.getServerIP();
-    }
-
-    @Override
-    public int getServerPort() {
-        return globalConfiguration.getServerPort();
-    }
-
-    @Override
     public int getOnlinePlayers() {
         return getServer().getOnlinePlayers().size();
     }
@@ -107,6 +104,11 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     @Override
     public double getTPS() {
         return Bukkit.getTPS()[0];
+    }
+
+    @Override
+    public long getLastDisconnect() {
+        return lastDisconnect;
     }
 
 }

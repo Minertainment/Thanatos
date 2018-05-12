@@ -26,7 +26,7 @@ public class JoinRequestListener extends PacketListener<JoinRequestPacket> {
             return;
         }
 
-        packet.getCallback().setData(new JoinRequestData(module.getGlobalConfiguration().getServerId(), module.getOnlinePlayers(), module.getTPS()));
+        packet.setCallbackData(new JoinRequestData(module.getGlobalConfiguration().getServerId(), module.getOnlinePlayers(), module.getTPS()));
         packet.respond();
     }
 

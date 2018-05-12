@@ -7,12 +7,11 @@ import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
-import com.minertainment.thanatos.slave.config.SlaveConfiguration;
 import com.minertainment.thanatos.slave.packet.JoinRequestListener;
 import com.minertainment.thanatos.slave.packet.SendPlayerBukkitListener;
 import com.minertainment.thanatos.slave.packet.ShutdownListener;
 import com.minertainment.thanatos.slave.something.PlayerListener;
-import org.bukkit.Bukkit;
+import net.minecraft.server.v1_12_R1.MinecraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SlaveModule extends JavaPlugin implements ThanatosServer {
@@ -20,7 +19,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     private Thanatos thanatos;
 
     private GlobalConfiguration globalConfiguration;
-    private SlaveConfiguration slaveConfiguration;
 
     private BeatingHeart beatingHeart;
     private ClusterManager clusterManager;
@@ -39,10 +37,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         globalConfiguration = new GlobalConfiguration(getDataFolder(), "thanatos");
         globalConfiguration.saveDefaultConfig();
         globalConfiguration.loadConfig();
-
-        slaveConfiguration = new SlaveConfiguration(this);
-        slaveConfiguration.saveDefaultConfig();
-        slaveConfiguration.loadConfig();
 
         beatingHeart = new BeatingHeart(this);
         clusterManager = new ClusterManager(this);
@@ -72,6 +66,7 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         beatingHeart.kill();
         clusterManager.disable();
         profileManager.disable();
+        joinRequestListener.disable();
         shutdownListener.disable();
         sendPlayerBukkitListener.disable();
     }
@@ -103,7 +98,8 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
 
     @Override
     public double getTPS() {
-        return Bukkit.getTPS()[0];
+        return MinecraftServer.getServer().recentTps[0];
+        //return Bukkit.getTPS()[0];
     }
 
     @Override

@@ -12,6 +12,10 @@ public class Thanatos {
         Thanatos.server = server;
     }
 
+    public static ThanatosServer getServer() {
+        return server;
+    }
+
     public static ClusterManager getClusterManager() {
         return server.getClusterManager();
     }

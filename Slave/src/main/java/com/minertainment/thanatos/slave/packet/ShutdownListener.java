@@ -2,16 +2,17 @@ package com.minertainment.thanatos.slave.packet;
 
 import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.packets.PacketListener;
+
 import com.minertainment.thanatos.commons.packet.ShutdownPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
 
 public class ShutdownListener extends PacketListener<ShutdownPacket> {
 
-    private SlaveModule slave;
+    private SlaveModule module;
 
-    public ShutdownListener(SlaveModule slave) {
-        super("THANATOS_SHUTDOWN_SERVER");
-        this.slave = slave;
+    public ShutdownListener(SlaveModule module) {
+        super("THANATOS_SHUTDOWN_SLAVE");
+        this.module = module;
     }
 
     @Override
@@ -20,14 +21,16 @@ public class ShutdownListener extends PacketListener<ShutdownPacket> {
     }
 
     @Override
-    public void readPacket(ShutdownPacket shutdownPacket) {
-        if(!slave.getGlobalConfiguration().getServerId().equals(shutdownPacket.getSlave().getServerId())) {
+    public void readPacket(ShutdownPacket packet) {
+        if(!module.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
+            module.getClusterManager().getClusterFromSlave(packet.getSlave().getServerId()).shutdown(packet.getSlave().getServerId());
+            module.getLogger().info("Slave '" + packet.getSlave().getServerId() + "' has been shutdown for reaching maximum idle time.");
             return;
         }
 
         // TODO: Log
-        slave.getLogger().info("Received shutdown request.");
-        slave.getServer().shutdown();
+        module.getLogger().info("Received shutdown request.");
+        module.getServer().shutdown();
     }
 
 }

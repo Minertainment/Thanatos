@@ -1,5 +1,7 @@
 package com.minertainment.thanatos.slave.something;
 
+import com.minertainment.thanatos.commons.cluster.ClusterConfig;
+import com.minertainment.thanatos.commons.packet.StartClusterPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +19,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-
+        if(module.getOnlinePlayers() > ClusterConfig.getSoftPlayerLimit()) {
+            new StartClusterPacket(module.getGlobalConfiguration().getClusterId()).send();
+        }
     }
 
     @EventHandler

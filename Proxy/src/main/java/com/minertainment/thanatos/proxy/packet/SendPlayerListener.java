@@ -24,12 +24,14 @@ public class SendPlayerListener extends PacketListener<SendPlayerPacket> {
             ProxiedPlayer player = proxy.getProxy().getPlayer(packet.getUniqueId());
             if(player == null) {
                 // TODO: Throw exception?
+                System.out.println(" --- NULL PLAYER (PROXY)");
                 return;
             }
 
             ServerInfo serverInfo = proxy.getProxy().getServerInfo(packet.getServerId());
             if(serverInfo == null) {
                 // TODO: Throw exception?
+                System.out.println(" --- NULL SERVERINFO");
                 return;
             }
 
@@ -57,10 +59,10 @@ public class SendPlayerListener extends PacketListener<SendPlayerPacket> {
                     !proxy.getClusterManager().getClusterFromSlave(player.getServer().getInfo().getName())
                             .getClusterId().equals(proxy.getProxyConfiguration().getFallbackCluster())) {
                 new SaveProfilePacket(player.getUniqueId(), player.getServer().getInfo().getName(), packet.getSlave().getServerId()).send();
-                System.out.println(" --- SAVE PROFILE (PLAYER HAS A SERVER)");
+                //System.out.println(" --- SAVE PROFILE (PLAYER HAS A SERVER)");
             } else {
                 new PreloadPacket(packet.getUniqueId(), packet.getSlave().getServerId()).send();
-                System.out.println(" --- PRELOAD (FRESH PLAYER)");
+                //System.out.println(" --- PRELOAD (FRESH PLAYER)");
             }
         } else {
             ServerInfo serverInfo = proxy.getProxy().getServerInfo(packet.getSlave().getServerId());

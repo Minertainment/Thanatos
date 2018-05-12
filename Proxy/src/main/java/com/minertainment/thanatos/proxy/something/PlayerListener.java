@@ -59,7 +59,7 @@ public class PlayerListener implements Listener {
             Cluster lastCluster = proxy.getClusterManager().getCluster(thanatosProfile.getLastCluster());
 
             Cluster finalCluster = (lastCluster != null ? lastCluster : defaultCluster);
-            System.out.println("Searching for slave from " + finalCluster.getClusterId());
+            //System.out.println("Searching for slave from " + finalCluster.getClusterId());
             finalCluster.getNextSlave(new SlaveCallback() {
                 @Override
                 public void onCallback(Slave slave) {
@@ -67,7 +67,7 @@ public class PlayerListener implements Listener {
                         proxy.getLogger().severe("Could not find a suitable slave to move (" + e.getPlayer().getName() + ") to! (Pre-Login)");
                         return;
                     }
-                    System.out.println("Found slave " + slave.getServerId());
+                    //System.out.println("Found slave " + slave.getServerId());
 
                     if(lastCluster == null) {
                         thanatosProfile.setLastCluster(defaultCluster.getClusterId());

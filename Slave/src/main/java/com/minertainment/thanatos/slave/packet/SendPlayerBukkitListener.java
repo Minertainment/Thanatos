@@ -40,25 +40,25 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     @Override
     public void readPacket(SendPlayerPacket packet) {
 
+        // Make sure the location is present and this is the correct slave.
+        if(packet.getLocation() == null) {
+            //System.out.println(" -- NO LOCATION");
+        }
+        // TODO: Better handling of null locations
+        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())/* || packet.getLocation() == null*/) {
+            return;
+        }
+
         // Do not save the last location of players simply switching servers.
         OfflinePlayer player;
         if((player = slaveModule.getServer().getPlayer(packet.getUniqueId())) != null && player.isOnline()) {
             ignoreDisconnect.add(packet.getUniqueId());
         }
 
-        // Make sure the location is present and this is the correct slave.
-        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId()) || packet.getLocation() == null) {
-            if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
-                System.out.println(" -- NOT SAME SERV");
-            }
-            if(packet.getLocation() == null) {
-                System.out.println(" -- NO LOCATION");
-            }
-            return;
-        }
-
         // Add the location to a map to teleport the player on login.
-        locationMap.put(packet.getUniqueId(), packet.getLocation());
+        if(packet.getLocation() != null) {
+            locationMap.put(packet.getUniqueId(), packet.getLocation());
+        }
     }
 
     @EventHandler
@@ -68,7 +68,7 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
         }
 
         e.getPlayer().teleport(locationMap.get(e.getPlayer().getUniqueId()).getLocation());
-        System.out.println(" --- TELEPROTING TO: " + locationMap.get(e.getPlayer().getUniqueId()).toString());
+        //System.out.println(" --- TELEPROTING TO: " + locationMap.get(e.getPlayer().getUniqueId()).toString());
         locationMap.remove(e.getPlayer().getUniqueId());
     }
 
@@ -76,11 +76,11 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     public void onQuit(PlayerQuitEvent e) {
         if(ignoreDisconnect.contains(e.getPlayer().getUniqueId())) {
             ignoreDisconnect.remove(e.getPlayer().getUniqueId());
-            System.out.println(" --- IGNORING DISCONNECT");
+            //System.out.println(" --- IGNORING DISCONNECT");
         } else {
             slaveModule.getProfileManager().getProfile(e.getPlayer().getUniqueId())
                     .setLastLocation(new LazyLocation().setLocation(e.getPlayer().getLocation()));
-            System.out.println(" --- SET LAST LOCATION");
+            //System.out.println(" --- SET LAST LOCATION");
         }
     }
 

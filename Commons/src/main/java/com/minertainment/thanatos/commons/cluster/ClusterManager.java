@@ -2,9 +2,9 @@ package com.minertainment.thanatos.commons.cluster;
 
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
 import com.minertainment.thanatos.commons.heartbeat.packet.HeartbeatPacketListener;
-import com.minertainment.thanatos.commons.packet.ShutdownPacket;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.slave.Slave;
+import com.minertainment.thanatos.commons.slave.SlaveStatus;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +51,11 @@ public class ClusterManager {
                 slave.setLastDisconnect(heartbeat.getLastDisconnect());
                 slave.heartbeat();
 
+                if(slave.getStatus() == SlaveStatus.STARTUP) {
+                    slave.setStatus(SlaveStatus.ONLINE);
+                    thanatosServer.getLogger().info(LOGGER_PREFIX + "Slave '" + slave.getServerId() + "' has finished starting up.");
+                }
+
                 // TODO: Debug options?
                 //plugin.getLogger().info(LOGGER_PREFIX + "Updated slave '" + slave.getServerId() + "' - [Players: " + slave.getOnlinePlayers() + ", TPS: " + slave.getTPS() + "]");
             }
@@ -59,11 +64,19 @@ public class ClusterManager {
         });
     }
 
-    private void refreshServers() {
+    public ClusterConfig getConfig() {
+        return clusterConfig;
+    }
+
+    public void refreshServers() {
         for(Cluster cluster : clusterMap.values()) {
             Iterator<Slave> slaveIterator = cluster.getSlaves().values().iterator();
             while(slaveIterator.hasNext()) {
                 Slave slave = slaveIterator.next();
+
+                if(slave.getStatus() == SlaveStatus.STARTUP) {
+                    continue;
+                }
 
                 // Server becomes unresponsive.
                 if((System.currentTimeMillis()-slave.getLastHeartbeat()) > 15000) {
@@ -72,17 +85,18 @@ public class ClusterManager {
                     slaveIterator.remove();
                     continue;
                 }
-
-                // Server reaches maximum idle time.
-                if(slave.getOnlinePlayers() == 0 && slave.getLastDisconnect() != -1 && cluster.getSlaves().size() > 1 &&
-                        System.currentTimeMillis()-slave.getLastDisconnect() > clusterConfig.getShutdownTimer()) {
-                    thanatosServer.getLogger().info("Slave '" + slave.getServerId() + "' has reached max idle time, shutting down...");
-                    new ShutdownPacket(slave).send();
-                    slaveIterator.remove();
-                    continue;
-                }
             }
         }
+    }
+
+    public Slave getSlave(String slaveId) {
+        for(Cluster cluster : clusterMap.values()) {
+            Slave slave;
+            if((slave = cluster.getSlave(slaveId)) != null) {
+                return slave;
+            }
+        }
+        return null;
     }
 
     public Slave getSlave(String clusterId, String serverId) {
@@ -110,6 +124,10 @@ public class ClusterManager {
         Cluster cluster = new Cluster(clusterId);
         clusterMap.put(clusterId, cluster);
         return cluster;
+    }
+
+    public HashMap<String, Cluster> getClusterMap() {
+        return clusterMap;
     }
 
     public void disable() {

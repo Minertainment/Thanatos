@@ -6,7 +6,7 @@ import java.io.File;
 
 public class GlobalConfiguration extends GSONConfig {
 
-    private String clusterId, serverId;
+    private static String clusterId, serverId;
 
     public GlobalConfiguration(File directory, String configurationName) {
         super(directory, configurationName);
@@ -15,11 +15,11 @@ public class GlobalConfiguration extends GSONConfig {
         this.serverId = "Server";
     }
 
-    public String getClusterId() {
+    public static String getClusterId() {
         return clusterId;
     }
 
-    public String getServerId() {
+    public static String getServerId() {
         return serverId;
     }
 

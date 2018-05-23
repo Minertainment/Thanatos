@@ -7,9 +7,8 @@ import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
-import com.minertainment.thanatos.slave.packet.JoinRequestListener;
-import com.minertainment.thanatos.slave.packet.SendPlayerBukkitListener;
-import com.minertainment.thanatos.slave.packet.ShutdownListener;
+import com.minertainment.thanatos.slave.packet.*;
+import com.minertainment.thanatos.slave.player.ThanatosPlayerListener;
 import com.minertainment.thanatos.slave.something.PlayerListener;
 import net.minecraft.server.v1_12_R1.MinecraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +26,9 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     private JoinRequestListener joinRequestListener;
     private ShutdownListener shutdownListener;
     private SendPlayerBukkitListener sendPlayerBukkitListener;
+    private KickPacketListener kickPacketListener;
+    private SoundPacketListener soundPacketListener;
+    private ThanatosPlayerListener thanatosPlayerListener;
 
     private long lastDisconnect;
 
@@ -45,6 +47,9 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         joinRequestListener = new JoinRequestListener(this);
         shutdownListener = new ShutdownListener(this);
         sendPlayerBukkitListener = new SendPlayerBukkitListener(this);
+        kickPacketListener = new KickPacketListener();
+        soundPacketListener = new SoundPacketListener();
+        thanatosPlayerListener = new ThanatosPlayerListener();
 
         lastDisconnect = -1;
 

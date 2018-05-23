@@ -2,7 +2,6 @@ package com.minertainment.thanatos.slave.packet;
 
 import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.packets.PacketListener;
-
 import com.minertainment.thanatos.commons.packet.ShutdownPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
 

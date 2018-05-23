@@ -1,6 +1,5 @@
 package com.minertainment.thanatos.commons.cluster;
 
-import com.minertainment.athena.misc.GenericCallback;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.athena.tasks.AsyncTask;
 import com.minertainment.thanatos.commons.Thanatos;

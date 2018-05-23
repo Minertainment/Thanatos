@@ -3,6 +3,7 @@ package com.minertainment.thanatos.proxy.something;
 import com.minertainment.thanatos.commons.cluster.Cluster;
 import com.minertainment.thanatos.commons.cluster.SlaveCallback;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
+import com.minertainment.thanatos.commons.packet.ThanatosPlayerPacket;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.slave.Slave;
 import com.minertainment.thanatos.proxy.ProxyModule;
@@ -75,6 +76,7 @@ public class PlayerListener implements Listener {
                         proxy.getProfileManager().saveProfile(thanatosProfile);
                     }
 
+                    new ThanatosPlayerPacket(e.getPlayer().getUniqueId(), e.getPlayer().getName(), true).send();
                     new SendPlayerPacket(e.getPlayer().getUniqueId(), slave, thanatosProfile.getLastLocation(), true).send();
 
                     // TODO: Use this when switching servers
@@ -91,6 +93,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDisconnect(PlayerDisconnectEvent e) {
         ProxiedPlayer proxiedPlayer = e.getPlayer();
+        new ThanatosPlayerPacket(proxiedPlayer.getUniqueId(), proxiedPlayer.getName(), false).send();
     }
 
     public void disable() {

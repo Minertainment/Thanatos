@@ -3,6 +3,7 @@ package com.minertainment.thanatos.commons.cluster;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.athena.tasks.AsyncTask;
 import com.minertainment.thanatos.commons.Thanatos;
+import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestData;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestPacket;
@@ -57,7 +58,7 @@ public class Cluster {
         new AsyncTask(() -> {
             HashMap<Slave, JoinRequestData> joinMap = new HashMap<>();
             for(Slave slave : slaveMap.values()) {
-                new JoinRequestPacket(slave, new PacketCallback<JoinRequestData>() {
+                        new JoinRequestPacket(slave, new PacketCallback<JoinRequestData>() {
                     @Override
                     public void onResponse(JoinRequestData joinRequestData) {
                         joinMap.put(slave, joinRequestData);
@@ -92,7 +93,7 @@ public class Cluster {
         Slave next = null;
         for(Slave slave : slaveMap.values()) {
             if(slave.getStatus() == SlaveStatus.ONLINE && slave.getOnlinePlayers() <
-                    ClusterConfig.getHardPlayerLimit() && slave.getTPS() > ClusterConfig.getHardTPSLimit()) {
+                    GlobalConfiguration.getHardPlayerLimit() && slave.getTPS() > GlobalConfiguration.getHardTPSLimit()) {
                 if(next == null || TPSMeter.fromTPS(slave.getTPS()).isHigherThan(TPSMeter.fromTPS(next.getTPS())) || slave.getOnlinePlayers() < next.getOnlinePlayers()) {
                     next = slave;
                 }

@@ -9,7 +9,7 @@ public class ProxyConfiguration extends GSONConfig {
     private String fallbackCluster;
 
     public ProxyConfiguration(Plugin plugin) {
-        super(plugin.getDataFolder(), "slave.json");
+        super(plugin.getDataFolder(), "proxy.json");
 
         defaultCluster = "Cluster";
         fallbackCluster = "Fallback";

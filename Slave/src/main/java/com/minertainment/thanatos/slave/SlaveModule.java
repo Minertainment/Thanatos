@@ -1,16 +1,19 @@
 package com.minertainment.thanatos.slave;
 
+import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
 import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
+import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.slave.packet.*;
 import com.minertainment.thanatos.slave.player.ThanatosPlayerListener;
 import com.minertainment.thanatos.slave.something.PlayerListener;
 import net.minecraft.server.v1_12_R1.MinecraftServer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SlaveModule extends JavaPlugin implements ThanatosServer {
@@ -94,6 +97,14 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     @Override
     public ThanatosProfileManager getProfileManager() {
         return profileManager;
+    }
+
+    @Override
+    public void onProfileLeave(ThanatosProfile profile) {
+        Player player = getServer().getPlayer(profile.getUniqueId());
+        if(player != null && player.isOnline()) {
+            profile.setLastLocation(new LazyLocation().setLocation(player.getLocation()));
+        }
     }
 
     @Override

@@ -112,14 +112,14 @@ public class ThanatosPlayer {
     public static void removePlayer(UUID id) {
         ThanatosPlayer player = getPlayer(id);
         if(player != null) {
-            removePlayer(getPlayer(id));
+            removePlayer(player);
         } else System.out.println("Tried removing Thanatos player with id=" + id.toString());
     }
 
     public static void removePlayer(String name) {
         ThanatosPlayer player = getPlayer(name);
         if(player != null) {
-            removePlayer(getPlayer(name));
+            removePlayer(player);
         } else System.out.println("Tried removing Thanatos player with name=" + name);
     }
 
@@ -130,7 +130,7 @@ public class ThanatosPlayer {
         }
 
         boolean idContains = playersByUUID.containsKey(player.getUUID());
-        boolean nameContains = playersByName.containsKey(player.getName());
+        boolean nameContains = playersByName.containsKey(player.getName().toLowerCase());
         if(idContains ^ nameContains) {
             System.out.println("Tried removing Thanatos player with mismatched name and id, id=" + player.getUUID().toString() + " name=" + player.getName());
         }
@@ -138,7 +138,7 @@ public class ThanatosPlayer {
         if(idContains && nameContains) {
             onlinePlayers.remove(player);
             playersByUUID.remove(player.getUUID());
-            playersByName.remove(player.getName());
+            playersByName.remove(player.getName().toLowerCase());
         }
     }
 

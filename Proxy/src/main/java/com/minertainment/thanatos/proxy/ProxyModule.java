@@ -10,10 +10,7 @@ import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.proxy.cluster.ProxyClusterManager;
 import com.minertainment.thanatos.proxy.commands.StatusCommand;
 import com.minertainment.thanatos.proxy.config.ProxyConfiguration;
-import com.minertainment.thanatos.proxy.packet.FindPlayerListener;
-import com.minertainment.thanatos.proxy.packet.SendMessageListener;
-import com.minertainment.thanatos.proxy.packet.SendPlayerListener;
-import com.minertainment.thanatos.proxy.packet.StartClusterListener;
+import com.minertainment.thanatos.proxy.packet.*;
 import com.minertainment.thanatos.proxy.something.PlayerListener;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -30,6 +27,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     private FindPlayerListener findPlayerListener;
     private SendPlayerListener sendPlayerListener;
     private SendMessageListener sendMessageListener;
+    private ThanatosPlayerUpdateListener thanatosPlayerUpdateListener;
 
     private ProxyClusterManager clusterManager;
     private ThanatosProfileManager profileManager;
@@ -52,6 +50,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
         startClusterListener = new StartClusterListener(this);
         sendPlayerListener = new SendPlayerListener(this);
         sendMessageListener = new SendMessageListener(this);
+        thanatosPlayerUpdateListener = new ThanatosPlayerUpdateListener(this);
 
         clusterManager = new ProxyClusterManager(this);
         profileManager = new ThanatosProfileManager();

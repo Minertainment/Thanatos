@@ -1,20 +1,28 @@
 package com.minertainment.thanatos.slave;
 
 import com.minertainment.athena.configuration.serializable.LazyLocation;
+import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
 import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
+import com.minertainment.thanatos.commons.packet.findplayer.FindPlayerData;
+import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdateData;
+import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdatePacket;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.slave.packet.*;
+import com.minertainment.thanatos.slave.player.ThanatosPlayer;
 import com.minertainment.thanatos.slave.player.ThanatosPlayerListener;
 import com.minertainment.thanatos.slave.something.PlayerListener;
 import net.minecraft.server.v1_12_R1.MinecraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Map;
+import java.util.UUID;
 
 public class SlaveModule extends JavaPlugin implements ThanatosServer {
 
@@ -63,6 +71,15 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
                 beatingHeart.start();
             }
         }, 100L);
+
+        new ThanatosPlayerUpdatePacket(new PacketCallback<ThanatosPlayerUpdateData>() {
+            @Override
+            public void onResponse(ThanatosPlayerUpdateData data) {
+                for(Map.Entry<UUID, String> player : data.getPlayers().entrySet()) {
+                    ThanatosPlayer.addPlayer(player.getKey(), player.getValue());
+                }
+            }
+        }).send();
     }
 
     public void setLastDisconnect(long lastDisconnect) {

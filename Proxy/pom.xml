@@ -22,17 +22,13 @@
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>md5</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
-            <version>1.4.7-SNAPSHOT</version>
+            <artifactId>BungeeCord-Proxy</artifactId>
+            <version>1.8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>

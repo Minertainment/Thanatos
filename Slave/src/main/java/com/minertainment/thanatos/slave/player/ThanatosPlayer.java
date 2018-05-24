@@ -59,7 +59,7 @@ public class ThanatosPlayer {
     }
 
     public void sendMessage(BaseComponent... components) {
-        new SendMessagePacket(id, components);
+        new SendMessagePacket(id, components).send();
     }
 
     public void playSound(Sound sound) {

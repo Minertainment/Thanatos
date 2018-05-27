@@ -12,8 +12,6 @@ import com.minertainment.thanatos.proxy.commands.StatusCommand;
 import com.minertainment.thanatos.proxy.config.ProxyConfiguration;
 import com.minertainment.thanatos.proxy.packet.*;
 import com.minertainment.thanatos.proxy.something.PlayerListener;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ProxyModule extends Plugin implements ThanatosServer {
@@ -27,6 +25,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     private FindPlayerListener findPlayerListener;
     private SendPlayerListener sendPlayerListener;
     private SendMessageListener sendMessageListener;
+    private TeleportPlayerListener teleportPlayerListener;
     private ThanatosPlayerUpdateListener thanatosPlayerUpdateListener;
 
     private ProxyClusterManager clusterManager;
@@ -50,6 +49,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
         startClusterListener = new StartClusterListener(this);
         sendPlayerListener = new SendPlayerListener(this);
         sendMessageListener = new SendMessageListener(this);
+        teleportPlayerListener = new TeleportPlayerListener(this);
         thanatosPlayerUpdateListener = new ThanatosPlayerUpdateListener(this);
 
         clusterManager = new ProxyClusterManager(this);
@@ -94,10 +94,10 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
     @Override
     public void onProfileLeave(ThanatosProfile profile) {
-        ServerInfo info = getProxy().getPlayer(profile.getUniqueId()).getServer().getInfo();
+        /*ServerInfo info = getProxy().getPlayer(profile.getUniqueId()).getServer().getInfo();
         profile.setLastSlave(info.getName());
         profile.setLastCluster(getClusterManager().getClusterFromSlave(info.getName()).getClusterId());
-        System.out.println("SET LAST SLAVE: " + info.getName());
+        System.out.println("SET LAST SLAVE: " + info.getName());*/
     }
 
     @Override

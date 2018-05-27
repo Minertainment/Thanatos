@@ -6,7 +6,6 @@ import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
 import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
-import com.minertainment.thanatos.commons.packet.findplayer.FindPlayerData;
 import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdateData;
 import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdatePacket;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
@@ -34,12 +33,14 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     private ClusterManager clusterManager;
     private ThanatosProfileManager profileManager;
 
+    private FindPlayerListener findPlayerListener;
     private JoinRequestListener joinRequestListener;
     private ShutdownListener shutdownListener;
     private SendPlayerBukkitListener sendPlayerBukkitListener;
     private KickPacketListener kickPacketListener;
     private SoundPacketListener soundPacketListener;
     private ThanatosPlayerListener thanatosPlayerListener;
+    private TeleportPlayerBukkitListener teleportPlayerBukkitListener;
 
     private long lastDisconnect;
 
@@ -55,12 +56,14 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         clusterManager = new ClusterManager(this);
         profileManager = new ThanatosProfileManager();
 
+        findPlayerListener = new FindPlayerListener(this);
         joinRequestListener = new JoinRequestListener(this);
         shutdownListener = new ShutdownListener(this);
         sendPlayerBukkitListener = new SendPlayerBukkitListener(this);
         kickPacketListener = new KickPacketListener();
         soundPacketListener = new SoundPacketListener();
         thanatosPlayerListener = new ThanatosPlayerListener();
+        teleportPlayerBukkitListener = new TeleportPlayerBukkitListener(this);
 
         lastDisconnect = -1;
 
@@ -91,9 +94,11 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         beatingHeart.kill();
         clusterManager.disable();
         profileManager.disable();
+        findPlayerListener.disable();
         joinRequestListener.disable();
         shutdownListener.disable();
         sendPlayerBukkitListener.disable();
+        teleportPlayerBukkitListener.disable();
     }
 
     @Override
@@ -122,6 +127,9 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         if(player != null && player.isOnline()) {
             profile.setLastLocation(new LazyLocation().setLocation(player.getLocation()));
         }
+
+        profile.setLastSlave(GlobalConfiguration.getServerId());
+        profile.setLastCluster(GlobalConfiguration.getClusterId());
     }
 
     @Override

@@ -6,12 +6,9 @@ import com.minertainment.athena.packets.PacketListener;
 import com.minertainment.athena.tasks.DelayedTask;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.UUID;

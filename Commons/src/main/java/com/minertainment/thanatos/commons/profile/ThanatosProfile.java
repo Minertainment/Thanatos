@@ -3,8 +3,6 @@ package com.minertainment.thanatos.commons.profile;
 import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.athena.profile.Profile;
 import com.minertainment.thanatos.commons.Thanatos;
-import com.minertainment.thanatos.commons.plugin.ThanatosServer;
-import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 
 import java.util.UUID;
 

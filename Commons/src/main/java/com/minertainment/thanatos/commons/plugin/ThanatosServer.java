@@ -6,7 +6,6 @@ import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 
 import java.io.File;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 public interface ThanatosServer {

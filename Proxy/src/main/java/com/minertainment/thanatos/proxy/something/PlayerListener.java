@@ -1,5 +1,8 @@
 package com.minertainment.thanatos.proxy.something;
 
+import com.minertainment.athena.configuration.serializable.LazyLocation;
+import com.minertainment.jcore.JCore;
+import com.minertainment.jcore.warps.Warp;
 import com.minertainment.thanatos.commons.cluster.Cluster;
 import com.minertainment.thanatos.commons.cluster.SlaveCallback;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
@@ -72,11 +75,18 @@ public class PlayerListener implements Listener {
                         thanatosProfile.setLastCluster(defaultCluster.getClusterId());
                         thanatosProfile.setLastSlave(slave.getServerId());
                         proxy.getProfileManager().saveProfile(thanatosProfile);
-                        System.out.println(" -- SET LAST SLAVE/CLUSTER CASUE NUll");
+                    }
+
+                    LazyLocation location = thanatosProfile.getLastLocation();
+                    if(location == null) {
+                        Warp warp = JCore.getWarpManager().getWarp("spawn");
+                        if(warp != null && warp.getLocation() != null) {
+                            location = warp.getLocation();
+                        }
                     }
 
                     new ThanatosPlayerPacket(e.getPlayer().getUniqueId(), e.getPlayer().getName(), true).send();
-                    new SendPlayerPacket(e.getPlayer().getUniqueId(), slave, thanatosProfile.getLastLocation(), true).send();
+                    new SendPlayerPacket(e.getPlayer().getUniqueId(), slave, location, true).send();
                 }
             });
         });

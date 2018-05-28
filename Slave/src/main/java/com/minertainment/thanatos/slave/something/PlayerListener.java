@@ -45,6 +45,15 @@ public class PlayerListener implements Listener {
     @EventHandler(
             priority = EventPriority.LOWEST
     )
+    public void onPickUp(PlayerAttemptPickupItemEvent e) {
+        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(
+            priority = EventPriority.LOWEST
+    )
     public void onPreProcess(PlayerCommandPreprocessEvent e) {
         if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
             e.setCancelled(true);

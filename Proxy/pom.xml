@@ -22,6 +22,10 @@
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>minertainment</id>
+            <url>https://repo.minertainment.com/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>

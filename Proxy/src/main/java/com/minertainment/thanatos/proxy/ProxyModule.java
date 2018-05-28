@@ -25,7 +25,6 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     private FindPlayerListener findPlayerListener;
     private SendPlayerListener sendPlayerListener;
     private SendMessageListener sendMessageListener;
-    private TeleportPlayerListener teleportPlayerListener;
     private ThanatosPlayerUpdateListener thanatosPlayerUpdateListener;
 
     private ProxyClusterManager clusterManager;
@@ -49,7 +48,6 @@ public class ProxyModule extends Plugin implements ThanatosServer {
         startClusterListener = new StartClusterListener(this);
         sendPlayerListener = new SendPlayerListener(this);
         sendMessageListener = new SendMessageListener(this);
-        teleportPlayerListener = new TeleportPlayerListener(this);
         thanatosPlayerUpdateListener = new ThanatosPlayerUpdateListener(this);
 
         clusterManager = new ProxyClusterManager(this);

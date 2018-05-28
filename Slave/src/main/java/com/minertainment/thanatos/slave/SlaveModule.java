@@ -40,7 +40,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     private KickPacketListener kickPacketListener;
     private SoundPacketListener soundPacketListener;
     private ThanatosPlayerListener thanatosPlayerListener;
-    private TeleportPlayerBukkitListener teleportPlayerBukkitListener;
 
     private long lastDisconnect;
 
@@ -63,7 +62,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         kickPacketListener = new KickPacketListener();
         soundPacketListener = new SoundPacketListener();
         thanatosPlayerListener = new ThanatosPlayerListener();
-        teleportPlayerBukkitListener = new TeleportPlayerBukkitListener(this);
 
         lastDisconnect = -1;
 
@@ -98,7 +96,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         joinRequestListener.disable();
         shutdownListener.disable();
         sendPlayerBukkitListener.disable();
-        teleportPlayerBukkitListener.disable();
     }
 
     @Override

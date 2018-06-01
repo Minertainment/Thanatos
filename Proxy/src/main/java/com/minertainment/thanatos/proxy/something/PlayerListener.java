@@ -57,7 +57,7 @@ public class PlayerListener implements Listener {
 
         // Pre-load the data onto the default cluster if no specific cluster is specified.
         // Ignore cache because the player should have their data stored in Mongo.
-        proxy.getProfileManager().loadProfile(e.getPlayer().getUniqueId(), false, profile -> {
+        proxy.getProfileManager().loadProfile(e.getPlayer().getUniqueId(), profile -> {
             ThanatosProfile thanatosProfile = (ThanatosProfile) profile;
 
             Cluster lastCluster = proxy.getClusterManager().getCluster(thanatosProfile.getLastCluster());

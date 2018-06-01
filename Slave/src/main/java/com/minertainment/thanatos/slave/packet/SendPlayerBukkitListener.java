@@ -6,6 +6,7 @@ import com.minertainment.athena.packets.PacketListener;
 import com.minertainment.athena.tasks.DelayedTask;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,11 +19,13 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     private SlaveModule slaveModule;
 
     private HashMap<UUID, LazyLocation> locationMap;
+    private HashMap<UUID, UUID> uuidMap;
 
     public SendPlayerBukkitListener(SlaveModule slaveModule) {
         super("THANATOS_SEND_PLAYER");
         this.slaveModule = slaveModule;
         this.locationMap = new HashMap<>();
+        this.uuidMap = new HashMap<>();
 
         slaveModule.getServer().getPluginManager().registerEvents(this, slaveModule);
     }
@@ -35,33 +38,58 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     @Override
     public void readPacket(SendPlayerPacket packet) {
 
-        // Make sure the location is present and this is the correct slave.
-        if(packet.getLocation() == null) {
-            System.out.println(" -- NO LOCATION");
-        }
-        // TODO: Better handling of null locations
-        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())/* || packet.getLocation() == null*/) {
+        // Only read on the server the player will be connecting to.
+        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
             return;
+        }
+
+        // Check if the player is already connected.
+        Player player;
+        if((player = slaveModule.getServer().getPlayer(packet.getUniqueId())) != null && player.isOnline()) {
+            if(packet.getLocation() != null) {
+                player.teleport(packet.getLocation().getLocation());
+                return;
+            }
+
+            Player target;
+            if(packet.getTargetPlayer() != null && (target = slaveModule
+                    .getServer().getPlayer(packet.getTargetPlayer())) != null && target.isOnline()) {
+                player.teleport(target.getLocation());
+                return;
+            }
         }
 
         // Add the location to a map to teleport the player on login.
         if(packet.getLocation() != null) {
             locationMap.put(packet.getUniqueId(), packet.getLocation());
+        } else if(packet.getTargetPlayer() != null) {
+            uuidMap.put(packet.getUniqueId(), packet.getTargetPlayer());
         }
     }
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent e) {
-        if(!locationMap.containsKey(e.getPlayer().getUniqueId())) {
+        if(!(locationMap.containsKey(e.getPlayer().getUniqueId()) || uuidMap.containsKey(e.getPlayer().getUniqueId()))) {
             return;
         }
 
+        final Player player = e.getPlayer();
         new DelayedTask(new Runnable() {
             @Override
             public void run() {
-                e.getPlayer().teleport(locationMap.get(e.getPlayer().getUniqueId()).getLocation());
-                System.out.println(" --- TELEPROTING TO: " + locationMap.get(e.getPlayer().getUniqueId()).toString());
-                locationMap.remove(e.getPlayer().getUniqueId());
+                if(locationMap.containsKey(player.getUniqueId())) {
+                    player.teleport(locationMap.get(player.getUniqueId()).getLocation());
+                    locationMap.remove(player.getUniqueId());
+                    return;
+                }
+
+                Player target;
+                if(uuidMap.containsKey(player.getUniqueId()) && (target = slaveModule
+                        .getServer().getPlayer(uuidMap.get(player.getUniqueId()))) != null && target.isOnline()) {
+                    player.teleport(target.getLocation());
+                    uuidMap.remove(player.getUniqueId());
+                    return;
+                }
             }
         }, 2L).run();
     }

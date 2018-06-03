@@ -91,7 +91,6 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     public void onDisable() {
         beatingHeart.kill();
         clusterManager.disable();
-        profileManager.disable();
         findPlayerListener.disable();
         joinRequestListener.disable();
         shutdownListener.disable();
@@ -120,6 +119,10 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
 
     @Override
     public void onProfileLeave(ThanatosProfile profile) {
+        if(GlobalConfiguration.getClusterId().equalsIgnoreCase("Jail")) {
+            return;
+        }
+
         Player player = getServer().getPlayer(profile.getUniqueId());
         if(player != null && player.isOnline()) {
             profile.setLastLocation(new LazyLocation().setLocation(player.getLocation()));

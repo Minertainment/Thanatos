@@ -36,7 +36,7 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     }
 
     @Override
-    public void readPacket(SendPlayerPacket packet) {
+    public void readPacket(final SendPlayerPacket packet) {
 
         // Only read on the server the player will be connecting to.
         if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
@@ -44,17 +44,27 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
         }
 
         // Check if the player is already connected.
-        Player player;
+        final Player player;
         if((player = slaveModule.getServer().getPlayer(packet.getUniqueId())) != null && player.isOnline()) {
             if(packet.getLocation() != null) {
-                player.teleport(packet.getLocation().getLocation());
+                slaveModule.getServer().getScheduler().runTask(slaveModule, new Runnable() {
+                    @Override
+                    public void run() {
+                        player.teleport(packet.getLocation().getLocation());
+                    }
+                });
                 return;
             }
 
-            Player target;
+            final Player target;
             if(packet.getTargetPlayer() != null && (target = slaveModule
                     .getServer().getPlayer(packet.getTargetPlayer())) != null && target.isOnline()) {
-                player.teleport(target.getLocation());
+                slaveModule.getServer().getScheduler().runTask(slaveModule, new Runnable() {
+                    @Override
+                    public void run() {
+                        player.teleport(target.getLocation());
+                    }
+                });
                 return;
             }
         }
@@ -78,7 +88,9 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
             @Override
             public void run() {
                 if(locationMap.containsKey(player.getUniqueId())) {
-                    player.teleport(locationMap.get(player.getUniqueId()).getLocation());
+                    if(locationMap.get(player.getUniqueId()).getLocation() != null) {
+                        player.teleport(locationMap.get(player.getUniqueId()).getLocation());
+                    }
                     locationMap.remove(player.getUniqueId());
                     return;
                 }

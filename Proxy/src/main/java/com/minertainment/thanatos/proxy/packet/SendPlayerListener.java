@@ -22,7 +22,6 @@ public class SendPlayerListener extends PacketListener<SendPlayerPacket> {
         super("THANATOS_SEND_PLAYER");
         this.proxy = proxy;
         //new SaveCompleteListener(packet -> new PreloadPacket(packet.getUniqueId(), packet.getConnectServerId()).send());
-
     }
 
     @Override
@@ -39,7 +38,8 @@ public class SendPlayerListener extends PacketListener<SendPlayerPacket> {
         }
 
         // Already connected to the server.
-        if(player.getServer().getInfo().getName().equals(packet.getSlave().getServerId())) {
+        if(player.getServer() != null && player.getServer().getInfo() != null &&
+                player.getServer().getInfo().getName().equals(packet.getSlave().getServerId())) {
             return;
         }
 

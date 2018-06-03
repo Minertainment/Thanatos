@@ -62,7 +62,6 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     public void onDisable() {
         sendPlayerListener.disable();
         clusterManager.disable();
-        profileManager.disable();
         playerListener.disable();
     }
 

@@ -3,7 +3,7 @@ package com.minertainment.thanatos.slave.packet;
 import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.athena.packets.PacketListener;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.packet.findplayer.FindPlayerData;
 import com.minertainment.thanatos.commons.packet.findplayer.FindPlayerPacket;
 import com.minertainment.thanatos.commons.slave.Slave;
@@ -26,11 +26,16 @@ public class FindPlayerListener extends PacketListener<FindPlayerPacket> {
 
     @Override
     public void readPacket(FindPlayerPacket packet) {
-        Player player = module.getServer().getPlayer(packet.getUniqueId());
+        Player player;
+        if(packet.getUniqueId() != null) {
+            player = module.getServer().getPlayer(packet.getUniqueId());
+        } else {
+            player = module.getServer().getPlayer(packet.getUsername());
+        }
+
         if(player != null && player.isOnline()) {
-            Slave slave = module.getClusterManager().getSlave(GlobalConfiguration.getServerId());
+            Slave slave = module.getClusterManager().getSlave(SlaveConfiguration.getServerId());
             if(slave != null) {
-                System.out.println(" -- SET CALLBACK DATA");
                 packet.setCallbackData(new FindPlayerData(packet.getUniqueId(), slave, new LazyLocation().setLocation(player.getLocation())));
                 packet.respond();
             }

@@ -1,26 +1,29 @@
 package com.minertainment.thanatos.commons.configuration;
 
-import com.minertainment.athena.configuration.GSONConfig;
+import com.minertainment.athena.configuration.MongoConfig;
+import com.minertainment.thanatos.commons.cluster.Cluster;
 
-import java.io.File;
-
-public class GlobalConfiguration extends GSONConfig {
-
-    private static String clusterId, serverId;
+public class ThanatosConfiguration extends MongoConfig {
 
     private static int softPlayerLimit, hardPlayerLimit;
     private static double softTPSLimit, hardTPSLimit;
 
-    public GlobalConfiguration(File directory, String configurationName) {
-        super(directory, configurationName);
+    private static long shutdownTimer;
 
-        this.clusterId = "Cluster";
-        this.serverId = "Server";
+    private static Cluster[] clusters;
+
+    public ThanatosConfiguration() {
+        super("Thanatos");
 
         this.softPlayerLimit = 100;
         this.hardPlayerLimit = 150;
         this.softTPSLimit = 16.0;
         this.hardTPSLimit = 13.0;
+
+        this.shutdownTimer = (20*60*1000);
+        this.clusters = new Cluster[]{
+                new Cluster("Cluster")
+        };
     }
 
     public static int getSoftPlayerLimit() {
@@ -39,12 +42,12 @@ public class GlobalConfiguration extends GSONConfig {
         return softTPSLimit;
     }
 
-    public static String getClusterId() {
-        return clusterId;
+    public static long getShutdownTimer() {
+        return shutdownTimer;
     }
 
-    public static String getServerId() {
-        return serverId;
+    public static Cluster[] getClusters() {
+        return clusters;
     }
 
 }

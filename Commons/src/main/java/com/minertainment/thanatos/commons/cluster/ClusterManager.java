@@ -1,5 +1,6 @@
 package com.minertainment.thanatos.commons.cluster;
 
+import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
 import com.minertainment.thanatos.commons.heartbeat.packet.HeartbeatPacketListener;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
@@ -11,23 +12,19 @@ import java.util.Iterator;
 
 public class ClusterManager {
 
-    private final String LOGGER_PREFIX = "[CM] ";
+    public static final String LOGGER_PREFIX = "[CM] ";
 
     private ThanatosServer thanatosServer;
 
-    private ClusterConfig clusterConfig;
     private HashMap<String, Cluster> clusterMap;
 
     private HeartbeatPacketListener packetListener;
 
     public ClusterManager(ThanatosServer thanatosServer) {
         this.thanatosServer = thanatosServer;
-        clusterConfig = new ClusterConfig(thanatosServer);
-        clusterConfig.saveDefaultConfig();
-        clusterConfig.loadConfig();
 
         clusterMap = new HashMap<>();
-        for(Cluster cluster : clusterConfig.getClusters()) {
+        for(Cluster cluster : ThanatosConfiguration.getClusters()) {
             clusterMap.put(cluster.getClusterId(), cluster);
         }
 
@@ -51,7 +48,10 @@ public class ClusterManager {
                 slave.setLastDisconnect(heartbeat.getLastDisconnect());
                 slave.heartbeat();
 
-                if(slave.getStatus() == SlaveStatus.STARTUP) {
+                if(slave.getStatus() == SlaveStatus.OFFLINE) {
+                    slave.setStatus(SlaveStatus.ONLINE);
+                    thanatosServer.getLogger().info(LOGGER_PREFIX + "Slave '" + slave.getServerId() + "' registered as online.");
+                } else if(slave.getStatus() == SlaveStatus.STARTUP) {
                     slave.setStatus(SlaveStatus.ONLINE);
                     thanatosServer.getLogger().info(LOGGER_PREFIX + "Slave '" + slave.getServerId() + "' has finished starting up.");
                 }
@@ -64,25 +64,23 @@ public class ClusterManager {
         });
     }
 
-    public ClusterConfig getConfig() {
-        return clusterConfig;
-    }
-
     public void refreshServers() {
         for(Cluster cluster : clusterMap.values()) {
             Iterator<Slave> slaveIterator = cluster.getSlaves().values().iterator();
             while(slaveIterator.hasNext()) {
                 Slave slave = slaveIterator.next();
 
-                if(slave.getStatus() == SlaveStatus.STARTUP) {
+                if(slave.getStatus() != SlaveStatus.ONLINE) {
                     continue;
                 }
 
                 // Server becomes unresponsive.
-                if((System.currentTimeMillis()-slave.getLastHeartbeat()) > 15000) {
+                if((System.currentTimeMillis()-slave.getLastHeartbeat()) > 2000) {
                     // TODO: Admin broadcast / status command
-                    thanatosServer.getLogger().warning(LOGGER_PREFIX + "Slave '" + slave.getServerId() + "' has not sent a heartbeat for 15 seconds, disabling...");
-                    slaveIterator.remove();
+                    thanatosServer.getLogger().warning(LOGGER_PREFIX + "Slave '" + slave.getServerId() + "' has not sent a heartbeat, disabling...");
+                    slave.setStatus(SlaveStatus.OFFLINE);
+                    slave.setOnlinePlayers(-1);
+                    slave.setTPS(-1);
                     continue;
                 }
             }

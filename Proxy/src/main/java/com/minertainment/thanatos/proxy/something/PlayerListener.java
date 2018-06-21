@@ -9,7 +9,10 @@ import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
 import com.minertainment.thanatos.commons.packet.ThanatosPlayerPacket;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.slave.Slave;
+import com.minertainment.thanatos.commons.slave.SlaveStatus;
 import com.minertainment.thanatos.proxy.ProxyModule;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -33,6 +36,26 @@ public class PlayerListener implements Listener {
         // Ignore existing connections to the proxy.
         if(e.getPlayer().getServer() != null) {
             return;
+        }
+
+        // Make sure one slave is online from each cluster.
+        for(Cluster cluster : proxy.getClusterManager().getClusterMap().values()) {
+
+            // Find a slave online.
+            boolean clusterReady = false;
+            for(Slave slave : cluster.getSlaves().values()) {
+                if(slave.getStatus() == SlaveStatus.ONLINE) {
+                    clusterReady = true;
+                    break;
+                }
+            }
+
+            // Cluster has no slaves online.
+            if(!clusterReady) {
+                e.getPlayer().disconnect(new ComponentBuilder("Please wait a few seconds before reconnecting...").color(ChatColor.RED).create());
+                e.setCancelled(true);
+                return;
+            }
         }
 
         // Get the default cluster if it exists.

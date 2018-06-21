@@ -23,9 +23,14 @@ public class FindPlayerListener extends PacketListener<FindPlayerPacket> {
 
     @Override
     public void readPacket(FindPlayerPacket packet) {
-        ProxiedPlayer player = module.getProxy().getPlayer(packet.getUniqueId());
+        ProxiedPlayer player;
+        if(packet.getUniqueId() != null) {
+            player = module.getProxy().getPlayer(packet.getUniqueId());
+        } else {
+            player = module.getProxy().getPlayer(packet.getUsername());
+        }
+
         if(player == null) {
-            System.out.println(" -- CALLBACK DATA NULL");
             packet.setCallbackData(new FindPlayerData(packet.getUniqueId(), null, null));
             packet.respond();
         }

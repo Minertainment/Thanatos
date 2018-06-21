@@ -4,7 +4,8 @@ import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
+import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.BeatingHeart;
 import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdateData;
 import com.minertainment.thanatos.commons.packet.playerupdate.ThanatosPlayerUpdatePacket;
@@ -27,7 +28,8 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
 
     private Thanatos thanatos;
 
-    private GlobalConfiguration globalConfiguration;
+    private ThanatosConfiguration thanatosConfiguration;
+    private SlaveConfiguration slaveConfiguration;
 
     private BeatingHeart beatingHeart;
     private ClusterManager clusterManager;
@@ -47,9 +49,13 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     public void onEnable() {
         thanatos = new Thanatos(this);
 
-        globalConfiguration = new GlobalConfiguration(getDataFolder(), "thanatos");
-        globalConfiguration.saveDefaultConfig();
-        globalConfiguration.loadConfig();
+        thanatosConfiguration = new ThanatosConfiguration();
+        thanatosConfiguration.saveDefaultConfigSync();
+        thanatosConfiguration.loadConfigSync();
+
+        slaveConfiguration = new SlaveConfiguration(this);
+        slaveConfiguration.saveDefaultConfig();
+        slaveConfiguration.loadConfig();
 
         beatingHeart = new BeatingHeart(this);
         clusterManager = new ClusterManager(this);
@@ -66,12 +72,7 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         lastDisconnect = -1;
 
         new PlayerListener(this);
-        getServer().getScheduler().runTaskLater(this, new Runnable() {
-            @Override
-            public void run() {
-                beatingHeart.start();
-            }
-        }, 100L);
+        getServer().getScheduler().runTaskLater(this, () -> beatingHeart.start(), 100L);
 
         new ThanatosPlayerUpdatePacket(new PacketCallback<ThanatosPlayerUpdateData>() {
             @Override
@@ -97,14 +98,13 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
         sendPlayerBukkitListener.disable();
     }
 
-    @Override
-    public ThanatosServerType getServerType() {
-        return ThanatosServerType.SLAVE;
+    public BeatingHeart getBeatingHeart() {
+        return beatingHeart;
     }
 
     @Override
-    public GlobalConfiguration getGlobalConfiguration() {
-        return globalConfiguration;
+    public ThanatosServerType getServerType() {
+        return ThanatosServerType.SLAVE;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
 
     @Override
     public void onProfileLeave(ThanatosProfile profile) {
-        if(GlobalConfiguration.getClusterId().equalsIgnoreCase("Jail")) {
+        if(SlaveConfiguration.getClusterId().equalsIgnoreCase("Jail")) {
             return;
         }
 
@@ -128,8 +128,8 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
             profile.setLastLocation(new LazyLocation().setLocation(player.getLocation()));
         }
 
-        profile.setLastSlave(GlobalConfiguration.getServerId());
-        profile.setLastCluster(GlobalConfiguration.getClusterId());
+        profile.setLastSlave(SlaveConfiguration.getServerId());
+        profile.setLastCluster(SlaveConfiguration.getClusterId());
     }
 
     @Override

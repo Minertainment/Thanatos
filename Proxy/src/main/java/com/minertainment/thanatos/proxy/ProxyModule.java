@@ -2,12 +2,14 @@ package com.minertainment.thanatos.proxy;
 
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
+import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.proxy.cluster.ProxyClusterManager;
+import com.minertainment.thanatos.proxy.commands.BaseCommand;
 import com.minertainment.thanatos.proxy.commands.StatusCommand;
 import com.minertainment.thanatos.proxy.config.ProxyConfiguration;
 import com.minertainment.thanatos.proxy.packet.*;
@@ -18,12 +20,13 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
     private Thanatos thanatos;
 
-    private GlobalConfiguration globalConfiguration;
+    private ThanatosConfiguration thanatosConfiguration;
     private ProxyConfiguration proxyConfiguration;
 
     private StartClusterListener startClusterListener;
     private FindPlayerListener findPlayerListener;
     private SendPlayerListener sendPlayerListener;
+    private ShutdownListener shutdownListener;
     private SendMessageListener sendMessageListener;
     private ThanatosPlayerUpdateListener thanatosPlayerUpdateListener;
 
@@ -36,9 +39,9 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     public void onEnable() {
         thanatos = new Thanatos(this);
 
-        globalConfiguration = new GlobalConfiguration(getDataFolder(), "thanatos");
-        globalConfiguration.saveDefaultConfig();
-        globalConfiguration.loadConfig();
+        thanatosConfiguration = new ThanatosConfiguration();
+        thanatosConfiguration.saveDefaultConfigSync();
+        thanatosConfiguration.loadConfigSync();
 
         proxyConfiguration = new ProxyConfiguration(this);
         proxyConfiguration.saveDefaultConfig();
@@ -47,6 +50,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
         findPlayerListener = new FindPlayerListener(this);
         startClusterListener = new StartClusterListener(this);
         sendPlayerListener = new SendPlayerListener(this);
+        shutdownListener = new ShutdownListener(this);
         sendMessageListener = new SendMessageListener(this);
         thanatosPlayerUpdateListener = new ThanatosPlayerUpdateListener(this);
 
@@ -55,6 +59,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
         playerListener = new PlayerListener(this);
 
+        new BaseCommand(this);
         new StatusCommand(this);
     }
 
@@ -75,11 +80,6 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     }
 
     @Override
-    public GlobalConfiguration getGlobalConfiguration() {
-        return globalConfiguration;
-    }
-
-    @Override
     public ClusterManager getClusterManager() {
         return clusterManager;
     }
@@ -91,10 +91,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
     @Override
     public void onProfileLeave(ThanatosProfile profile) {
-        /*ServerInfo info = getProxy().getPlayer(profile.getUniqueId()).getServer().getInfo();
-        profile.setLastSlave(info.getName());
-        profile.setLastCluster(getClusterManager().getClusterFromSlave(info.getName()).getClusterId());
-        System.out.println("SET LAST SLAVE: " + info.getName());*/
+
     }
 
     @Override

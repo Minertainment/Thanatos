@@ -4,6 +4,7 @@ import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.athena.packets.PacketListener;
 import com.minertainment.athena.tasks.DelayedTask;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     public void readPacket(final SendPlayerPacket packet) {
 
         // Only read on the server the player will be connecting to.
-        if(!slaveModule.getGlobalConfiguration().getServerId().equals(packet.getSlave().getServerId())) {
+        if(!SlaveConfiguration.getServerId().equals(packet.getSlave().getServerId())) {
             return;
         }
 

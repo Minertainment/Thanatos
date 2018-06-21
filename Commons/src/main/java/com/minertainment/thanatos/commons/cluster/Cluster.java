@@ -3,7 +3,8 @@ package com.minertainment.thanatos.commons.cluster;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.athena.tasks.AsyncTask;
 import com.minertainment.thanatos.commons.Thanatos;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
+import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestData;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestPacket;
@@ -21,17 +22,14 @@ public class Cluster {
     private String clusterId;
 
     private transient HashMap<String, Slave> slaveMap;
-    private transient HashMap<String, Slave> offlineSlaveMap;
 
     public Cluster() {
         slaveMap = new HashMap<>();
-        offlineSlaveMap = new HashMap<>();
     }
 
     public Cluster(String clusterId) {
         this.clusterId = clusterId;
         slaveMap = new HashMap<>();
-        offlineSlaveMap = new HashMap<>();
     }
 
     public String getClusterId() {
@@ -93,7 +91,7 @@ public class Cluster {
         Slave next = null;
         for(Slave slave : slaveMap.values()) {
             if(slave.getStatus() == SlaveStatus.ONLINE && slave.getOnlinePlayers() <
-                    GlobalConfiguration.getHardPlayerLimit() && slave.getTPS() > GlobalConfiguration.getHardTPSLimit()) {
+                    ThanatosConfiguration.getHardPlayerLimit() && slave.getTPS() > ThanatosConfiguration.getHardTPSLimit()) {
                 if(next == null || TPSMeter.fromTPS(slave.getTPS()).isHigherThan(TPSMeter.fromTPS(next.getTPS())) || slave.getOnlinePlayers() < next.getOnlinePlayers()) {
                     next = slave;
                 }
@@ -114,7 +112,11 @@ public class Cluster {
     }
 
     public Slave registerSlave(String serverId, int onlinePlayers, double tps) {
-        Slave slave = new Slave(serverId, SlaveStatus.ONLINE, onlinePlayers, tps);
+        return registerSlave(serverId, SlaveStatus.ONLINE, onlinePlayers, tps);
+    }
+
+    public Slave registerSlave(String serverId, SlaveStatus slaveStatus, int onlinePlayers, double tps) {
+        Slave slave = new Slave(serverId, slaveStatus, onlinePlayers, tps);
         slaveMap.put(serverId, slave);
         return slave;
     }
@@ -124,7 +126,7 @@ public class Cluster {
     }
 
     public void startSlave() {
-        Iterator<Slave> slaveIterator = offlineSlaveMap.values().iterator();
+        Iterator<Slave> slaveIterator = slaveMap.values().iterator();
         Slave next = null;
         while(slaveIterator.hasNext()) {
             Slave slave = slaveIterator.next();
@@ -141,15 +143,16 @@ public class Cluster {
         if(slave == null) {
             return;
         }
-        
+
         Thanatos.getServer().getLogger().info("Starting slave '" + slave.getServerId() + "' from cluster '" + getClusterId() + "'.");
         slave.setStatus(SlaveStatus.STARTUP);
-        slaveMap.put(slave.getServerId(), slave);
-        offlineSlaveMap.remove(slave.getServerId());
 
         try {
-            Runtime.getRuntime().exec(ClusterConfig.getDirectory() + "\\" + getClusterId()
-                    .toLowerCase() + "cluster" + "\\" + slave.getServerId() + "\\" + "launch.bat");
+            Runtime.getRuntime().exec(new String[] {
+                    "bash",
+                    SlaveConfiguration.getDirectory() + "/" + getClusterId()
+                            .toLowerCase() + "cluster" + "/" + slave.getServerId() + "/" + getClusterId().toLowerCase() + "cluster" + "/" + "launch.bash"
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -157,7 +160,6 @@ public class Cluster {
 
     public void shutdown(String serverId) {
         shutdown(getSlave(serverId));
-        slaveMap.remove(serverId);
     }
 
     public void shutdown(Slave slave) {
@@ -165,7 +167,6 @@ public class Cluster {
         slave.setTPS(20.0);
         slave.setLastDisconnect(-1);
         slave.setStatus(SlaveStatus.OFFLINE);
-        offlineSlaveMap.put(slave.getServerId(), slave);
     }
 
 }

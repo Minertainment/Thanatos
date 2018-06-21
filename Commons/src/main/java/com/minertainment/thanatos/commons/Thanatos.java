@@ -1,7 +1,6 @@
 package com.minertainment.thanatos.commons;
 
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 
 public class Thanatos {
@@ -18,10 +17,6 @@ public class Thanatos {
 
     public static ClusterManager getClusterManager() {
         return server.getClusterManager();
-    }
-
-    public static GlobalConfiguration getGlobalConfiguration() {
-        return server.getGlobalConfiguration();
     }
 
 }

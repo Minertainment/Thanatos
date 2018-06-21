@@ -10,21 +10,22 @@ public enum TPSMeter {
     LOW(10, 0, 1, ChatColor.RED),
     ERR(0, -999, 0, ChatColor.BLACK);
 
-    private int upper, lower, weight;
+    private double upper, lower;
+    private int weight;
     private ChatColor color;
 
-    TPSMeter(int upper, int lower, int weight, ChatColor color) {
+    TPSMeter(double upper, double lower, int weight, ChatColor color) {
         this.upper = upper;
         this.lower = lower;
         this.weight = weight;
         this.color = color;
     }
 
-    public int getUpper() {
+    public double getUpper() {
         return upper;
     }
 
-    public int getLower() {
+    public double getLower() {
         return lower;
     }
 

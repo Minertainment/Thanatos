@@ -2,6 +2,7 @@ package com.minertainment.thanatos.slave.packet;
 
 import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.packets.PacketListener;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestData;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
@@ -22,11 +23,11 @@ public class JoinRequestListener extends PacketListener<JoinRequestPacket> {
 
     @Override
     public void readPacket(JoinRequestPacket packet) {
-        if(!packet.getSlave().getServerId().equals(module.getGlobalConfiguration().getServerId())) {
+        if(!packet.getSlave().getServerId().equals(SlaveConfiguration.getServerId())) {
             return;
         }
 
-        packet.setCallbackData(new JoinRequestData(module.getGlobalConfiguration().getServerId(), module.getOnlinePlayers(), module.getTPS()));
+        packet.setCallbackData(new JoinRequestData(SlaveConfiguration.getServerId(), module.getOnlinePlayers(), module.getTPS()));
         packet.respond();
     }
 

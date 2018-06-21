@@ -2,7 +2,7 @@ package com.minertainment.thanatos.slave.player;
 
 import com.minertainment.athena.configuration.serializable.LazyLocation;
 import com.minertainment.thanatos.commons.Thanatos;
-import com.minertainment.thanatos.commons.configuration.GlobalConfiguration;
+import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.packet.KickPacket;
 import com.minertainment.thanatos.commons.packet.SendMessagePacket;
 import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
@@ -77,7 +77,7 @@ public class ThanatosPlayer {
 
     public void teleport(Location location) {
         if(!isLocal()) {
-            Slave slave = Thanatos.getClusterManager().getSlave(GlobalConfiguration.getServerId());
+            Slave slave = Thanatos.getClusterManager().getSlave(SlaveConfiguration.getServerId());
             LazyLocation loc = new LazyLocation(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
             new SendPlayerPacket(id, slave, loc, true).send();
         } else {

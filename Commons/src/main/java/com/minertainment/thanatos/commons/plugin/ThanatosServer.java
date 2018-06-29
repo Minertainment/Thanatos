@@ -1,7 +1,6 @@
 package com.minertainment.thanatos.commons.plugin;
 
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
-import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 

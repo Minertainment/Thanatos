@@ -24,6 +24,10 @@ public class Slave {
         return serverId;
     }
 
+    public int getServerNum() {
+        return Integer.valueOf(getServerId().substring(getServerId().length()-2, getServerId().length()));
+    }
+
     public SlaveStatus getStatus() {
         return status;
     }

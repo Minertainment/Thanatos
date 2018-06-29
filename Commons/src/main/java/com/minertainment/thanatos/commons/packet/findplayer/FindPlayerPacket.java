@@ -21,6 +21,7 @@ public class FindPlayerPacket extends AbstractCallbackPacket<FindPlayerData> {
     public FindPlayerPacket(UUID uuid, String username, PacketCallback<FindPlayerData> callback) {
         super("THANATOS_FIND_PLAYER", callback);
         this.uuid = uuid;
+        this.username = username;
     }
 
     public UUID getUniqueId() {

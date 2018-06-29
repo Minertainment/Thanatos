@@ -2,7 +2,6 @@ package com.minertainment.thanatos.proxy;
 
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
-import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
@@ -39,7 +38,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
     public void onEnable() {
         thanatos = new Thanatos(this);
 
-        thanatosConfiguration = new ThanatosConfiguration();
+        thanatosConfiguration = new ThanatosConfiguration(this);
         thanatosConfiguration.saveDefaultConfigSync();
         thanatosConfiguration.loadConfigSync();
 

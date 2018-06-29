@@ -3,7 +3,6 @@ package com.minertainment.thanatos.commons.cluster;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.athena.tasks.AsyncTask;
 import com.minertainment.thanatos.commons.Thanatos;
-import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.heartbeat.Heartbeat;
 import com.minertainment.thanatos.commons.packet.joinrequest.JoinRequestData;
@@ -145,12 +144,14 @@ public class Cluster {
         }
 
         Thanatos.getServer().getLogger().info("Starting slave '" + slave.getServerId() + "' from cluster '" + getClusterId() + "'.");
+        Thanatos.getServer().getLogger().info("  - Running: bash " + ThanatosConfiguration.getDirectory() + "/" + getClusterId()
+                .toLowerCase() + "cluster" + "/" + slave.getServerId() + "/" + getClusterId().toLowerCase() + "cluster" + "/" + "launch.bash");
         slave.setStatus(SlaveStatus.STARTUP);
 
         try {
             Runtime.getRuntime().exec(new String[] {
                     "bash",
-                    SlaveConfiguration.getDirectory() + "/" + getClusterId()
+                    ThanatosConfiguration.getDirectory() + "/" + getClusterId()
                             .toLowerCase() + "cluster" + "/" + slave.getServerId() + "/" + getClusterId().toLowerCase() + "cluster" + "/" + "launch.bash"
             });
         } catch (IOException e) {

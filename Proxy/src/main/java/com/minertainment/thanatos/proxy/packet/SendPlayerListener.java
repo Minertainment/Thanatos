@@ -7,7 +7,7 @@ import com.minertainment.athena.profile.packet.preload.PreloadPacket;
 import com.minertainment.athena.profile.packet.preload.PreloadProfileData;
 import com.minertainment.athena.profile.packet.save.SaveProfileData;
 import com.minertainment.athena.profile.packet.save.SaveProfilePacket;
-import com.minertainment.thanatos.commons.packet.SendPlayerPacket;
+import com.minertainment.thanatos.commons.packet.sendplayer.SendPlayerPacket;
 import com.minertainment.thanatos.proxy.ProxyModule;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

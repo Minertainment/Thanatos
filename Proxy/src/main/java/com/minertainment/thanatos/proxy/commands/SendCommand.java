@@ -4,14 +4,15 @@ import com.minertainment.athena.commands.CommandContext;
 import com.minertainment.athena.commands.exceptions.CommandException;
 import com.minertainment.thanatos.commons.cluster.Cluster;
 import com.minertainment.thanatos.commons.slave.Slave;
-import com.minertainment.thanatos.commons.slave.SlaveStatus;
 import com.minertainment.thanatos.proxy.ProxyModule;
+import com.minertainment.thanatos.proxy.cluster.ProxyClusterManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SendCommand extends ThanatosCommand {
 
@@ -45,25 +46,11 @@ public class SendCommand extends ThanatosCommand {
         }
 
         if(toSlave != null) {
-            sendPlayers(toSlave, (Slave) (fromSlave != null ? fromSlave : fromCluster.getSlaves().values().toArray(new Slave[fromCluster.getSlaves().size()])));
+            ((ProxyClusterManager) proxyModule.getClusterManager()).send(toSlave,
+                    (fromSlave != null ? new ArrayList<>(Arrays.asList(new Slave[]{fromSlave})) :
+                            new ArrayList<>(Arrays.asList(fromCluster.getSlaves().values().toArray(new Slave[fromCluster.getSlaves().size()])))), null);
         } else {
             sendPlayers(toCluster, (Slave) (fromSlave != null ? fromSlave : fromCluster.getSlaves().values().toArray(new Slave[fromCluster.getSlaves().size()])));
-        }
-    }
-
-    public void sendPlayers(Slave to, Slave... from) {
-        ServerInfo toServer = proxyModule.getProxy().getServerInfo(to.getServerId());
-        if(toServer != null) {
-            for(Slave slave : from) {
-                if(slave.getOnlinePlayers() > 0) {
-                    ServerInfo fromServer = proxyModule.getProxy().getServerInfo(slave.getServerId());
-                    if(fromServer != null) {
-                        for(ProxiedPlayer player : fromServer.getPlayers()) {
-                            player.connect(toServer);
-                        }
-                    }
-                }
-            }
         }
     }
 

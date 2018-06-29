@@ -49,7 +49,7 @@ public class SlaveModule extends JavaPlugin implements ThanatosServer {
     public void onEnable() {
         thanatos = new Thanatos(this);
 
-        thanatosConfiguration = new ThanatosConfiguration();
+        thanatosConfiguration = new ThanatosConfiguration(this);
         thanatosConfiguration.saveDefaultConfigSync();
         thanatosConfiguration.loadConfigSync();
 

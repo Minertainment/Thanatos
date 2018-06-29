@@ -1,12 +1,13 @@
-package com.minertainment.thanatos.commons.packet;
+package com.minertainment.thanatos.commons.packet.sendplayer;
 
 import com.minertainment.athena.configuration.serializable.LazyLocation;
-import com.minertainment.athena.packets.AbstractPacket;
+import com.minertainment.athena.packets.callback.AbstractCallbackPacket;
+import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.thanatos.commons.slave.Slave;
 
 import java.util.UUID;
 
-public class SendPlayerPacket extends AbstractPacket {
+public class SendPlayerPacket extends AbstractCallbackPacket<SendPlayerData> {
 
     private UUID uuid;
     private Slave slave;
@@ -27,7 +28,11 @@ public class SendPlayerPacket extends AbstractPacket {
     }
 
     public SendPlayerPacket(UUID uuid, Slave slave, LazyLocation location, UUID targetPlayer, boolean preload) {
-        super("THANATOS_SEND_PLAYER");
+        this(uuid, slave, location, targetPlayer, preload, null);
+    }
+
+    public SendPlayerPacket(UUID uuid, Slave slave, LazyLocation location, UUID targetPlayer, boolean preload, PacketCallback<SendPlayerData> callback) {
+        super("THANATOS_SEND_PLAYER", callback);
         this.uuid = uuid;
         this.slave = slave;
         this.location = location;

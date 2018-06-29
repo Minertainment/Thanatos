@@ -94,12 +94,6 @@ public class PlayerListener implements Listener {
                         return;
                     }
 
-                    if(lastCluster == null) {
-                        thanatosProfile.setLastCluster(defaultCluster.getClusterId());
-                        thanatosProfile.setLastSlave(slave.getServerId());
-                        proxy.getProfileManager().saveProfile(thanatosProfile);
-                    }
-
                     LazyLocation location = thanatosProfile.getLastLocation();
                     if(location == null) {
                         Warp warp = JCore.getWarpManager().getWarp("spawn");

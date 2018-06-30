@@ -40,11 +40,9 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onDrop(PlayerDropItemEvent e) {
-        if(!e.getPlayer().isOp() && !Thanatos.getServer().getProfileManager().isLoaded(e.getPlayer().getUniqueId())) {
-            ThanatosProfile profile = Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId());
-            if(profile.isDisconnected()) {
-                e.setCancelled(true);
-            }
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getPlayer().isOp() && (!manager.isLoaded(e.getPlayer().getUniqueId()) || manager.getProfile(e.getPlayer().getUniqueId()).isDisconnected())) {
+            e.setCancelled(true);
         }
     }
 

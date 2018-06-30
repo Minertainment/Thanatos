@@ -4,6 +4,8 @@ import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.packet.StartClusterPacket;
+import com.minertainment.thanatos.commons.profile.ThanatosProfile;
+import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.slave.SlaveModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,8 +40,11 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onDrop(PlayerDropItemEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
-            e.setCancelled(true);
+        if(!e.getPlayer().isOp() && !Thanatos.getServer().getProfileManager().isLoaded(e.getPlayer().getUniqueId())) {
+            ThanatosProfile profile = Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId());
+            if(profile.isDisconnected()) {
+                e.setCancelled(true);
+            }
         }
     }
 
@@ -47,7 +52,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onPickUp(PlayerAttemptPickupItemEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getPlayer().isOp() && (!manager.isLoaded(e.getPlayer().getUniqueId()) || manager.getProfile(e.getPlayer().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }
@@ -56,7 +62,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onPreProcess(PlayerCommandPreprocessEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getPlayer().isOp() && (!manager.isLoaded(e.getPlayer().getUniqueId()) || manager.getProfile(e.getPlayer().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }
@@ -65,7 +72,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onInteract(PlayerInteractEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getPlayer().isOp() && (!manager.isLoaded(e.getPlayer().getUniqueId()) || manager.getProfile(e.getPlayer().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }
@@ -74,7 +82,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onOpen(InventoryOpenEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getPlayer().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getPlayer().isOp() && (!manager.isLoaded(e.getPlayer().getUniqueId()) || manager.getProfile(e.getPlayer().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }
@@ -83,7 +92,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onClick(InventoryClickEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getWhoClicked().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getWhoClicked().isOp() && (!manager.isLoaded(e.getWhoClicked().getUniqueId()) || manager.getProfile(e.getWhoClicked().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }
@@ -92,7 +102,8 @@ public class PlayerListener implements Listener {
             priority = EventPriority.LOWEST
     )
     public void onDrag(InventoryDragEvent e) {
-        if(Thanatos.getServer().getProfileManager().getProfile(e.getWhoClicked().getUniqueId()).isDisconnected()) {
+        ThanatosProfileManager manager = Thanatos.getServer().getProfileManager();
+        if(!e.getWhoClicked().isOp() && (!manager.isLoaded(e.getWhoClicked().getUniqueId()) || manager.getProfile(e.getWhoClicked().getUniqueId()).isDisconnected())) {
             e.setCancelled(true);
         }
     }

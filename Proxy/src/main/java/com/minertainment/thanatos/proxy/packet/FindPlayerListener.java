@@ -31,7 +31,7 @@ public class FindPlayerListener extends PacketListener<FindPlayerPacket> {
         }
 
         if(player == null) {
-            packet.setCallbackData(new FindPlayerData(packet.getUniqueId(), null, null));
+            packet.setCallbackData(new FindPlayerData(packet.getUniqueId(), null, null, null));
             packet.respond();
         }
     }

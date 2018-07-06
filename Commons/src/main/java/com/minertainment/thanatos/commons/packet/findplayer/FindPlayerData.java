@@ -9,17 +9,23 @@ import java.util.UUID;
 public class FindPlayerData extends AbstractCallbackData {
 
     private UUID uuid;
+    private String name;
     private Slave slave;
     private LazyLocation location;
 
-    public FindPlayerData(UUID uuid, Slave slave, LazyLocation location) {
+    public FindPlayerData(UUID uuid, String name, Slave slave, LazyLocation location) {
         this.uuid = uuid;
+        this.name = name;
         this.slave = slave;
         this.location = location;
     }
 
     public UUID getUniqueId() {
         return uuid;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Slave getSlave() {

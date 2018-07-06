@@ -1,6 +1,9 @@
 package com.minertainment.thanatos.proxy.something;
 
+import com.minertainment.athena.configuration.GSONUtils;
 import com.minertainment.athena.configuration.serializable.LazyLocation;
+import com.minertainment.athena.packets.PacketListener;
+import com.minertainment.athena.plugin.bukkit.packet.SaveCompletePacket;
 import com.minertainment.jcore.JCore;
 import com.minertainment.jcore.warps.Warp;
 import com.minertainment.thanatos.commons.cluster.Cluster;
@@ -16,18 +19,44 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class PlayerListener implements Listener {
+import java.util.HashMap;
+import java.util.UUID;
+
+public class PlayerListener extends PacketListener<SaveCompletePacket> implements Listener {
 
     private ProxyModule proxy;
+    private HashMap<UUID, Long> recentlyDisconnected = new HashMap<>();
 
     public PlayerListener(ProxyModule proxy) {
+        super("SAVE_COMPLETE_QUIT");
         this.proxy = proxy;
 
         proxy.getProxy().getPluginManager().registerListener(proxy, this);
+    }
+
+    @EventHandler
+    public void onPreLogin(PreLoginEvent e) {
+        if(proxy.getProxy().getPlayer(e.getConnection().getUniqueId()) != null || proxy.getProxy().getPlayer(e.getConnection().getName()) != null) {
+            e.setCancelled(true);
+            e.setCancelReason("You are already connected to this server");
+            return;
+        }
+
+        Long time = recentlyDisconnected.get(e.getConnection().getUniqueId());
+        if(time != null) {
+            if(time < 5000) {
+                e.setCancelled(true);
+                e.setCancelReason("Tried re-connecting to quickly, please try again in a couple seconds");
+            } else {
+                recentlyDisconnected.remove(e.getConnection().getUniqueId());
+                proxy.getLogger().warning("Allowing user " + e.getConnection().getName() + " on the server after hitting 5 second limit.");
+            }
+        }
     }
 
     @EventHandler
@@ -112,7 +141,18 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDisconnect(PlayerDisconnectEvent e) {
         ProxiedPlayer proxiedPlayer = e.getPlayer();
+        recentlyDisconnected.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
         new ThanatosPlayerPacket(proxiedPlayer.getUniqueId(), proxiedPlayer.getName(), false).send();
+    }
+
+    @Override
+    public SaveCompletePacket parsePacket(String s) {
+        return GSONUtils.getGson().fromJson(s, SaveCompletePacket.class);
+    }
+
+    @Override
+    public void readPacket(SaveCompletePacket saveCompletePacket) {
+        recentlyDisconnected.remove(saveCompletePacket.getPlayer());
     }
 
     public void disable() {

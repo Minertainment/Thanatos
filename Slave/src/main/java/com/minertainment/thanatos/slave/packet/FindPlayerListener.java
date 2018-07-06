@@ -36,7 +36,7 @@ public class FindPlayerListener extends PacketListener<FindPlayerPacket> {
         if(player != null && player.isOnline()) {
             Slave slave = module.getClusterManager().getSlave(SlaveConfiguration.getServerId());
             if(slave != null) {
-                packet.setCallbackData(new FindPlayerData(packet.getUniqueId(), player.getName(), slave, new LazyLocation().setLocation(player.getLocation())));
+                packet.setCallbackData(new FindPlayerData(player.getUniqueId(), player.getName(), slave, new LazyLocation().setLocation(player.getLocation())));
                 packet.respond();
             }
         }

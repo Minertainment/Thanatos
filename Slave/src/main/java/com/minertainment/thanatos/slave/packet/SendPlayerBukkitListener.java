@@ -8,10 +8,12 @@ import com.minertainment.thanatos.commons.configuration.SlaveConfiguration;
 import com.minertainment.thanatos.commons.packet.sendplayer.SendPlayerData;
 import com.minertainment.thanatos.commons.packet.sendplayer.SendPlayerPacket;
 import com.minertainment.thanatos.slave.SlaveModule;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -75,36 +77,33 @@ public class SendPlayerBukkitListener extends PacketListener<SendPlayerPacket> i
     }
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent e) {
-        if(!(locationMap.containsKey(e.getPlayer().getUniqueId()) || uuidMap.containsKey(e.getPlayer().getUniqueId()))) {
+    public void onJoin(final PlayerSpawnLocationEvent e) {
+        if (!(locationMap.containsKey(e.getPlayer().getUniqueId()) || uuidMap.containsKey(e.getPlayer().getUniqueId()))) {
             return;
         }
 
         final Player player = e.getPlayer();
-        new DelayedTask(() -> {
-            if(callbackMap.containsKey(player.getUniqueId())) {
-                SendPlayerPacket packet = callbackMap.get(player.getUniqueId());
-                packet.setCallbackData(new SendPlayerData(true));
-                packet.respond();
-                callbackMap.remove(player.getUniqueId());
-            }
+        if (callbackMap.containsKey(player.getUniqueId())) {
+            SendPlayerPacket packet = callbackMap.get(player.getUniqueId());
+            packet.setCallbackData(new SendPlayerData(true));
+            packet.respond();
+            callbackMap.remove(player.getUniqueId());
+        }
 
-            if(locationMap.containsKey(player.getUniqueId())) {
-                if(locationMap.get(player.getUniqueId()).getLocation() != null) {
-                    player.teleport(locationMap.get(player.getUniqueId()).getLocation());
-                }
-                locationMap.remove(player.getUniqueId());
-                return;
+        if (locationMap.containsKey(player.getUniqueId())) {
+            if (locationMap.get(player.getUniqueId()).getLocation() != null) {
+                e.setSpawnLocation(locationMap.get(player.getUniqueId()).getLocation());
             }
+            locationMap.remove(player.getUniqueId());
+            return;
+        }
 
-            Player target;
-            if(uuidMap.containsKey(player.getUniqueId()) && (target = slaveModule
-                    .getServer().getPlayer(uuidMap.get(player.getUniqueId()))) != null && target.isOnline()) {
-                player.teleport(target.getLocation());
-                uuidMap.remove(player.getUniqueId());
-                return;
-            }
-        }, 2L).run();
+        Player target;
+        if (uuidMap.containsKey(player.getUniqueId()) && (target = slaveModule
+                .getServer().getPlayer(uuidMap.get(player.getUniqueId()))) != null && target.isOnline()) {
+            e.setSpawnLocation(target.getLocation());
+            uuidMap.remove(player.getUniqueId());
+        }
     }
 
     @Override

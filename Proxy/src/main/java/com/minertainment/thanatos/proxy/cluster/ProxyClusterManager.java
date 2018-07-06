@@ -60,7 +60,7 @@ public class ProxyClusterManager extends ClusterManager {
                 }
 
                 // Merge servers
-                if(slave.getOnlinePlayers() > 0 && slave.getServerNum() != 1 && slave.getOnlinePlayers() < ThanatosConfiguration.getSoftPlayerLimit()) {
+                /*if(slave.getOnlinePlayers() > 0 && slave.getServerNum() != 1 && slave.getOnlinePlayers() < ThanatosConfiguration.getSoftPlayerLimit()) {
                     Slave merge = findMerge(cluster, slave);
                     if(merge == null) {
                         continue;
@@ -72,7 +72,7 @@ public class ProxyClusterManager extends ClusterManager {
                         module.getLogger().info("Players on '" + slave.getServerId() + "' merged to '" + merge.getServerId() + "' successfully.");
                         new ShutdownPacket(slave, false).send();
                     });
-                }
+                }*/
             }
         }
     }

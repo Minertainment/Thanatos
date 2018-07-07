@@ -8,8 +8,7 @@ import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
 import com.minertainment.thanatos.commons.profile.ThanatosProfile;
 import com.minertainment.thanatos.commons.profile.ThanatosProfileManager;
 import com.minertainment.thanatos.proxy.cluster.ProxyClusterManager;
-import com.minertainment.thanatos.proxy.commands.BaseCommand;
-import com.minertainment.thanatos.proxy.commands.StatusCommand;
+import com.minertainment.thanatos.proxy.commands.*;
 import com.minertainment.thanatos.proxy.config.ProxyConfiguration;
 import com.minertainment.thanatos.proxy.packet.*;
 import com.minertainment.thanatos.proxy.something.PlayerListener;
@@ -60,6 +59,9 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
         new BaseCommand(this);
         new StatusCommand(this);
+        new StartCommand(this);
+        new StopCommand();
+        new RestartCommand();
     }
 
     @Override

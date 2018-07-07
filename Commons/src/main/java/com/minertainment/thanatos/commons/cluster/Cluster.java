@@ -1,6 +1,5 @@
 package com.minertainment.thanatos.commons.cluster;
 
-import com.minertainment.athena.misc.GenericCallback;
 import com.minertainment.athena.misc.PostData;
 import com.minertainment.athena.packets.callback.PacketCallback;
 import com.minertainment.athena.tasks.AsyncTask;
@@ -15,7 +14,6 @@ import com.minertainment.thanatos.commons.slave.Slave;
 import com.minertainment.thanatos.commons.slave.SlaveStatus;
 import org.json.simple.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -162,7 +160,7 @@ public class Cluster {
         JSONObject data = new JSONObject();
         data.put("server", slave.getServerId().toLowerCase());
         data.put("cluster", getClusterId().toLowerCase());
-        new PostData(server.getAddress() + "/api/start", data, res -> {
+        new PostData("http://" + server.getAddress() + "/api/start", data, res -> {
             if(!(boolean) res.get("success")) {
                 // TODO: Throw exception or something?
                 Thanatos.getServer().getLogger().severe("Could not start slave '" + slave.getServerId() +
@@ -170,7 +168,7 @@ public class Cluster {
                 return;
             }
             Thanatos.getServer().getLogger().info("Started slave '" + slave.getServerId() + "' on server '" + server.getAddress() + "' successfully.");
-        });
+        }).run();
     }
 
     public void shutdown(String serverId) {

@@ -78,6 +78,9 @@
                     <artifactSet>
                         <includes>
                             <include>com.minertainment.thanatos.modules.commons:Commons</include>
+                            <include>com.googlecode.json-simple:json-simple</include>
+                            <include>org.apache.httpcomponents:httpcore</include>
+                            <include>commons-logging:commons-logging</include>
                         </includes>
                     </artifactSet>
                     <createDependencyReducedPom>false</createDependencyReducedPom>

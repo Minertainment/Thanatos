@@ -2,6 +2,6 @@ package com.minertainment.thanatos.commons.slave;
 
 public enum SlaveStatus {
 
-    ONLINE, OFFLINE, STARTUP, MERGING
+    ONLINE, OFFLINE, STARTUP, MERGING, FLAGGED
 
 }

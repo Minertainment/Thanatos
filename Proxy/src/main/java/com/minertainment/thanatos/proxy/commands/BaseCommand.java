@@ -23,6 +23,7 @@ public class BaseCommand extends AthenaBungeeCommand {
 
         Athena.getCommandManager().registerCommand(this);
         subCommands.add(new SendCommand(proxy));
+        subCommands.add(new SetStatusCommand(proxy));
     }
 
     @Override

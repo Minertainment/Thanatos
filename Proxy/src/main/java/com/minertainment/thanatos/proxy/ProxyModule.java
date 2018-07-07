@@ -2,6 +2,7 @@ package com.minertainment.thanatos.proxy;
 
 import com.minertainment.thanatos.commons.Thanatos;
 import com.minertainment.thanatos.commons.cluster.ClusterManager;
+import com.minertainment.thanatos.commons.configuration.ServerConfiguration;
 import com.minertainment.thanatos.commons.configuration.ThanatosConfiguration;
 import com.minertainment.thanatos.commons.plugin.ThanatosServer;
 import com.minertainment.thanatos.commons.plugin.ThanatosServerType;
@@ -20,6 +21,7 @@ public class ProxyModule extends Plugin implements ThanatosServer {
 
     private ThanatosConfiguration thanatosConfiguration;
     private ProxyConfiguration proxyConfiguration;
+    private ServerConfiguration serverConfiguration;
 
     private StartClusterListener startClusterListener;
     private FindPlayerListener findPlayerListener;
@@ -44,6 +46,10 @@ public class ProxyModule extends Plugin implements ThanatosServer {
         proxyConfiguration = new ProxyConfiguration(this);
         proxyConfiguration.saveDefaultConfig();
         proxyConfiguration.loadConfig();
+
+        serverConfiguration = new ServerConfiguration();
+        serverConfiguration.saveDefaultConfig();
+        serverConfiguration.loadConfig();
 
         findPlayerListener = new FindPlayerListener(this);
         startClusterListener = new StartClusterListener(this);

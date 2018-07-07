@@ -38,12 +38,7 @@ public class StartCommand extends AthenaBungeeCommand {
             throw new CommandException(ChatColor.RED + "The slave you wish to start is not offline.");
         }
 
-        if(slave.getStatus() == SlaveStatus.ONLINE) {
-            sender.sendMessage(ChatColor.YELLOW + "Executing startup procedure on '" + slave.getServerId() + "'...");
-        } else {
-            sender.sendMessage(ChatColor.YELLOW + "Slave '" + slave.getServerId() + "' is " + slave.getStatus().name() + ". Attempting to execute shutdown procedure regardless...");
-        }
-
+        sender.sendMessage(ChatColor.YELLOW + "Executing startup procedure on '" + slave.getServerId() + "'...");
         proxy.getClusterManager().getClusterFromSlave(slave.getServerId()).start(slave);
     }
 

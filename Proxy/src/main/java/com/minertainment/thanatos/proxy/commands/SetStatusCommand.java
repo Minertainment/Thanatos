@@ -21,7 +21,7 @@ public class SetStatusCommand extends ThanatosCommand {
     private ProxyModule proxyModule;
 
     public SetStatusCommand(ProxyModule proxyModule) {
-        super("/thanatos setstatus [slave] [status]");
+        super("/thanatos setstatus [slave] [status]", "setstatus");
 
         this.proxyModule = proxyModule;
     }
